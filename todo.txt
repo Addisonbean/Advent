@@ -1,0 +1,4 @@
+Add:
+	bitwise operators
+	allow arguments in function calls
+
