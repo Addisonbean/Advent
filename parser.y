@@ -11,18 +11,16 @@ prechigh
 preclow
 
 rule
-	# line: expression
-	# # | NEW_LINE { MyLangCore.new_line } # or nothing?
-	# | NEW_LINE { return }
-
 	expression : value 
 	| expression NEW_LINE { return val[0] }
 	| NEW_LINE expression { return val[1] }
-	| NEW_LINE 
+	| NEW_LINE
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
+	| IF value block { return [:IF, val[1], val[2]] }
 
 	value : NUMBER { return [:NUMBER, val[0]] }
 	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
+	| NULL { return [:NULL] }
 	# | literal { return [:LITERAL, val[0]] }
 	| assignment
 	# make these there own section, like: | OPERATION { return MyLangCore.binary_operator(val[0], val[2], val[1]) }
@@ -39,7 +37,6 @@ rule
 
 	block : CURLY_BRACKET_L expression CURLY_BRACKET_R { return [:BLOCK, val[1]] }
 
-	# TODO: make this value instead of block
 	call_block : value LEFT_PARENTHESIS RIGHT_PARENTHESIS { return [:CALL, val[0]] }
 
 	# start_block : CURLY_BRACKET_L new_lines

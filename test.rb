@@ -76,6 +76,10 @@ describe MyLang do
 		it "adds and multiplies" do
 			@lang.exec(%{("Na" + "N ") * 3 + "!"}).must_equal "NaN NaN NaN !"
 		end
+
+		it "handles string with strange charecters" do
+			@lang.exec(%{"(( Hey {} !"}).must_equal "(( Hey {} !"
+		end
 	end
 
 	# this is what I need to implement
@@ -109,6 +113,18 @@ describe MyLang do
 			# @lang.exec("a + b").must_equal 19
 			@lang.exec("a").must_equal 9
 			@lang.exec("b").must_equal 10
+		end
+	end
+
+	describe "if" do
+		it "runs the block for truthy values" do
+			@lang.exec(%( if 5 { 4 } )).must_equal 4
+			@lang.exec(%(
+if 5 {
+	4
+}
+			)).must_equal 4
+			@lang.exec(%( if NULL { 7 } )).must_equal nil
 		end
 	end
 

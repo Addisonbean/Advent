@@ -2,6 +2,7 @@ class MyLangParser
 macro
 	BLANK [\ \t]+
 	# BLANK [\s]+
+	IF if
 	VAR [a-zA-Z_]\w*
 	NUMBER \d+
 	MULTIPLY \*
@@ -16,10 +17,13 @@ macro
 	CURLY_BRACKET_L {
 	CURLY_BRACKET_R }
 	NEW_LINE (\n|;)
+	NULL null
 	# NEW_LINE ;
 	
 rule
 	{BLANK} # nah
+	{IF} { [:IF, nil] }
+	{NULL} { [:NULL, nil] }
 	{VAR} { [:VAR, text.to_sym] }
 	{NUMBER} { [:NUMBER, text.to_i] }
 	{MULTIPLY} { [:MULTIPLY, text.to_sym] }

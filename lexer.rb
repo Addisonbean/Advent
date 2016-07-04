@@ -60,6 +60,12 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/[ \t]+/))
         ;
 
+      when (text = @ss.scan(/if/))
+         action { [:IF, nil] }
+
+      when (text = @ss.scan(/null/))
+         action { [:NULL, nil] }
+
       when (text = @ss.scan(/[a-zA-Z_]\w*/))
          action { [:VAR, text.to_sym] }
 

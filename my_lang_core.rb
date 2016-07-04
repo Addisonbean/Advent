@@ -12,6 +12,7 @@ module MyLangCore
 		when Fixnum, Bignum, Float then :Number
 		when String then :String
 		when Array then :Block
+		when Nil then :Null
 		end
 	end
 
@@ -60,6 +61,8 @@ class MyLang
 		val = case ary.shift
 		when :NUMBER, :STRING, :BLOCK # TODO? make this line: `when :LITERAL`
 			ary.shift
+		when :NULL
+			nil
 		when :VAR
 			MyLangCore.get_var(ary.shift)
 		when :ASSIGN
@@ -68,6 +71,8 @@ class MyLang
 			MyLangCore.binary_operator(ary.shift, parse(ary.shift), parse(ary.shift))
 		when :CALL
 			parse(ary.shift[1])
+		when :IF
+			parse(ary.shift[1]) if parse(ary.shift)
 		end
 		ary.empty? ? val : parse(ary)
 	end
