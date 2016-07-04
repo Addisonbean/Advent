@@ -1,4 +1,4 @@
-class MyLang
+class MyLangParser
 macro
 	BLANK [\s]+
 	VAR [a-zA-Z_]\w*
@@ -12,6 +12,9 @@ macro
 	RIGHT_PARENTHESIS \)
 	STRING ("([^"]|\\")*?(?<!\\)")|('([^']|\\')*?(?<!\\)')
 	# STRING ('[^']*?')|("[^"]*?")
+	CURLY_BRACKET_L {
+	CURLY_BRACKET_R }
+	NEW_LINE (\n|;)
 	
 rule
 	{BLANK} # nah
@@ -25,6 +28,9 @@ rule
 	{LEFT_PARENTHESIS} { [:LEFT_PARENTHESIS, text.to_sym] }
 	{RIGHT_PARENTHESIS} { [:RIGHT_PARENTHESIS, text.to_sym] }
 	{STRING} { [:STRING, text] }
+	{CURLY_BRACKET_L} { [:CURLY_BRACKET_L, text.to_sym] }
+	{CURLY_BRACKET_R} { [:CURLY_BRACKET_R, text.to_sym] }
+	{NEW_LINE} { [:NEW_LINE, nil] }
 
 inner
 	def tokenize(code)

@@ -5,7 +5,7 @@
 #++
 
 require 'racc/parser'
-class MyLang < Racc::Parser
+class MyLangParser < Racc::Parser
   require 'strscan'
 
   class ScanError < StandardError ; end
@@ -89,6 +89,15 @@ class MyLang < Racc::Parser
 
       when (text = @ss.scan(/("([^"]|\\")*?(?<!\\)")|('([^']|\\')*?(?<!\\)')/))
          action { [:STRING, text] }
+
+      when (text = @ss.scan(/{/))
+         action { [:CURLY_BRACKET_L, text.to_sym] }
+
+      when (text = @ss.scan(/}/))
+         action { [:CURLY_BRACKET_R, text.to_sym] }
+
+      when (text = @ss.scan(/(\n|;)/))
+         action { [:NEW_LINE, nil] }
 
       else
         text = @ss.string[@ss.pos .. -1]

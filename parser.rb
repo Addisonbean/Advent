@@ -9,9 +9,9 @@ require 'racc/parser.rb'
 	require_relative "lexer"
 	require_relative "my_lang_core"
 
-class MyLang < Racc::Parser
+class MyLangParser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 35)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 51)
 	def parse(input)
 		scan_str(input)
 	end
@@ -19,62 +19,72 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 35)
 ##### State transition tables begin ###
 
 racc_action_table = [
-     6,     9,    10,     6,     8,     9,     6,     3,     4,     7,
-     3,     4,     7,     3,     4,     7,     6,    14,    15,     6,
-   nil,   nil,     6,     3,     4,     7,     3,     4,     7,     3,
-     4,     7,     6,    20,     9,    10,    11,    12,   nil,     3,
-     4,     7,     9,    10,    11,    12,     9,    10,    11,    12,
-     9,    10,    11 ]
+     8,    13,    14,    15,     8,    13,    14,     3,     5,     6,
+     9,    11,     5,     6,     9,    11,     8,    27,    13,    12,
+     8,    18,    20,   nil,     5,     6,     9,    11,     5,     6,
+     9,    11,     8,   nil,   nil,   nil,     8,   nil,   nil,   nil,
+     5,     6,     9,    11,     5,     6,     9,    11,     8,   nil,
+   nil,   nil,     8,   nil,   nil,   nil,     5,     6,     9,    11,
+     5,     6,     9,    11,    25,    13,    14,    15,    16,    13,
+    14,    15,    16,    13,    14,    15,    16 ]
 
 racc_action_check = [
-     0,    18,    18,    14,     1,    17,    12,     0,     0,     0,
-    14,    14,    14,    12,    12,    12,     6,     7,     8,     9,
-   nil,   nil,    10,     6,     6,     6,     9,     9,     9,    10,
-    10,    10,    11,    13,    13,    13,    13,    13,   nil,    11,
-    11,    11,    21,    21,    21,    21,     2,     2,     2,     2,
-    19,    19,    19 ]
+     0,    24,    24,    24,    18,    23,    23,     0,     0,     0,
+     0,     0,    18,    18,    18,    18,    16,    19,    22,     1,
+     8,     9,    12,   nil,    16,    16,    16,    16,     8,     8,
+     8,     8,    13,   nil,   nil,   nil,    11,   nil,   nil,   nil,
+    13,    13,    13,    13,    11,    11,    11,    11,    14,   nil,
+   nil,   nil,    15,   nil,   nil,   nil,    14,    14,    14,    14,
+    15,    15,    15,    15,    17,    17,    17,    17,    17,    26,
+    26,    26,    26,     4,     4,     4,     4 ]
 
 racc_action_pointer = [
-    -2,     4,    42,   nil,   nil,   nil,    14,     9,    18,    17,
-    20,    30,     4,    30,     1,   nil,   nil,     1,    -3,    46,
-   nil,    38 ]
+    -2,    19,   nil,   nil,    69,   nil,   nil,   nil,    18,    13,
+   nil,    34,    22,    30,    46,    50,    14,    61,     2,     3,
+   nil,   nil,    14,     1,    -3,   nil,    65,   nil ]
 
 racc_action_default = [
-   -12,   -12,    -1,    -2,    -3,    -4,   -12,   -10,   -12,   -12,
-   -12,   -12,   -12,   -12,   -12,    22,    -5,    -6,    -7,    -8,
-    -9,   -11 ]
+   -18,   -18,    -1,    -2,    -3,    -4,    -5,    -6,   -18,   -12,
+   -13,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,
+    28,    -7,    -8,    -9,   -10,   -11,   -14,   -15 ]
 
 racc_goto_table = [
-     2,     1,   nil,   nil,   nil,   nil,    13,   nil,   nil,    16,
-    17,    18,    19,   nil,    21 ]
+     2,     1,    17,   nil,   nil,   nil,   nil,    21,    22,    23,
+    24,    19,    26 ]
 
 racc_goto_check = [
-     2,     1,   nil,   nil,   nil,   nil,     2,   nil,   nil,     2,
-     2,     2,     2,   nil,     2 ]
+     2,     1,     3,   nil,   nil,   nil,   nil,     3,     3,     3,
+     3,     2,     3 ]
 
 racc_goto_pointer = [
-   nil,     1,     0,   nil ]
+   nil,     1,     0,    -6,   nil,   nil,   nil,   nil ]
 
 racc_goto_default = [
-   nil,   nil,   nil,     5 ]
+   nil,   nil,   nil,     4,     7,    10,   nil,   nil ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
-  1, 13, :_reduce_none,
-  1, 14, :_reduce_2,
-  1, 14, :_reduce_3,
-  1, 14, :_reduce_none,
-  3, 14, :_reduce_5,
-  3, 14, :_reduce_6,
-  3, 14, :_reduce_7,
-  3, 14, :_reduce_8,
-  3, 14, :_reduce_9,
-  1, 14, :_reduce_10,
-  3, 15, :_reduce_11 ]
+  1, 17, :_reduce_none,
+  1, 17, :_reduce_none,
+  1, 18, :_reduce_none,
+  1, 19, :_reduce_4,
+  1, 19, :_reduce_5,
+  1, 19, :_reduce_none,
+  3, 19, :_reduce_7,
+  3, 19, :_reduce_8,
+  3, 19, :_reduce_9,
+  3, 19, :_reduce_10,
+  3, 19, :_reduce_11,
+  1, 19, :_reduce_12,
+  1, 19, :_reduce_none,
+  3, 20, :_reduce_14,
+  3, 21, :_reduce_15,
+  2, 22, :_reduce_none,
+  2, 23, :_reduce_none ]
 
-racc_reduce_n = 12
+racc_reduce_n = 18
 
-racc_shift_n = 22
+racc_shift_n = 28
 
 racc_token_table = {
   false => 0,
@@ -86,11 +96,15 @@ racc_token_table = {
   :ADD => 6,
   :SUBTRACT => 7,
   :EQUALS => 8,
-  :NUMBER => 9,
-  :STRING => 10,
-  :VAR => 11 }
+  :NEW_LINE => 9,
+  :NUMBER => 10,
+  :STRING => 11,
+  :VAR => 12,
+  :CURLY_BRACKET_L => 13,
+  :CURLY_BRACKET_R => 14,
+  :new_lines => 15 }
 
-racc_nt_base = 12
+racc_nt_base = 16
 
 racc_use_result_var = true
 
@@ -120,13 +134,21 @@ Racc_token_to_s_table = [
   "ADD",
   "SUBTRACT",
   "EQUALS",
+  "NEW_LINE",
   "NUMBER",
   "STRING",
   "VAR",
+  "CURLY_BRACKET_L",
+  "CURLY_BRACKET_R",
+  "new_lines",
   "$start",
+  "line",
   "expression",
   "value",
-  "assignment" ]
+  "assignment",
+  "block",
+  "start_block",
+  "end_block" ]
 
 Racc_debug_parser = false
 
@@ -136,73 +158,90 @@ Racc_debug_parser = false
 
 # reduce 1 omitted
 
-module_eval(<<'.,.,', 'parser.y', 14)
-  def _reduce_2(val, _values, result)
-     return Value.new(val[0], "Number") 
-    result
-  end
-.,.,
+# reduce 2 omitted
 
-module_eval(<<'.,.,', 'parser.y', 15)
-  def _reduce_3(val, _values, result)
-     return Value.new(MyLangCore.str_escape(val[0]), "String") 
-    result
-  end
-.,.,
-
-# reduce 4 omitted
+# reduce 3 omitted
 
 module_eval(<<'.,.,', 'parser.y', 18)
-  def _reduce_5(val, _values, result)
-     return MyLangCore.binary_operator(val[0], val[2], val[1]) 
+  def _reduce_4(val, _values, result)
+     return [:NUMBER, val[0]] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 19)
-  def _reduce_6(val, _values, result)
-     return MyLangCore.binary_operator(val[0], val[2], val[1]) 
+  def _reduce_5(val, _values, result)
+     return [:STRING, MyLangCore.str_escape(val[0])] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 20)
-  def _reduce_7(val, _values, result)
-     return MyLangCore.binary_operator(val[0], val[2], val[1]) 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.y', 21)
-  def _reduce_8(val, _values, result)
-     return MyLangCore.binary_operator(val[0], val[2], val[1]) 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.y', 22)
-  def _reduce_9(val, _values, result)
-     return val[1] 
-    result
-  end
-.,.,
+# reduce 6 omitted
 
 module_eval(<<'.,.,', 'parser.y', 23)
-  def _reduce_10(val, _values, result)
-     return MyLangCore.get_var(val[0]) 
+  def _reduce_7(val, _values, result)
+     return [:OPERATOR, val[1], val[0], val[2]] 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 24)
+  def _reduce_8(val, _values, result)
+     return [:OPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 25)
-  def _reduce_11(val, _values, result)
-     return MyLangCore.new_variable(val[0], val[2]) 
+  def _reduce_9(val, _values, result)
+     return [:OPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
+
+module_eval(<<'.,.,', 'parser.y', 26)
+  def _reduce_10(val, _values, result)
+     return [:OPERATOR, val[1], val[0], val[2]] 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 27)
+  def _reduce_11(val, _values, result)
+     return val[1] 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 28)
+  def _reduce_12(val, _values, result)
+     return [:VAR, val[0]] 
+    result
+  end
+.,.,
+
+# reduce 13 omitted
+
+module_eval(<<'.,.,', 'parser.y', 31)
+  def _reduce_14(val, _values, result)
+     return [:ASSIGN, val[0], val[2]] 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 33)
+  def _reduce_15(val, _values, result)
+     return [:BLOCK, val[1]] 
+    result
+  end
+.,.,
+
+# reduce 16 omitted
+
+# reduce 17 omitted
 
 def _reduce_none(val, _values, result)
   val[0]
 end
 
-end   # class MyLang
+end   # class MyLangParser
