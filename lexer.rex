@@ -3,6 +3,7 @@ macro
 	BLANK [\ \t]+
 	# BLANK [\s]+
 	IF if
+	ELSE else
 	VAR [a-zA-Z_]\w*
 	NUMBER \d+
 	MULTIPLY \*
@@ -23,6 +24,7 @@ macro
 rule
 	{BLANK} # nah
 	{IF} { [:IF, nil] }
+	{ELSE} { [:ELSE, nil] }
 	{NULL} { [:NULL, nil] }
 	{VAR} { [:VAR, text.to_sym] }
 	{NUMBER} { [:NUMBER, text.to_i] }

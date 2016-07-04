@@ -16,7 +16,7 @@ rule
 	| NEW_LINE expression { return val[1] }
 	| NEW_LINE
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
-	| IF value block { return [:IF, val[1], val[2]] }
+	| if_statement
 
 	value : NUMBER { return [:NUMBER, val[0]] }
 	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
@@ -38,6 +38,9 @@ rule
 	block : CURLY_BRACKET_L expression CURLY_BRACKET_R { return [:BLOCK, val[1]] }
 
 	call_block : value LEFT_PARENTHESIS RIGHT_PARENTHESIS { return [:CALL, val[0]] }
+
+	if_statement : IF value block { return [:IF, val[1], val[2]] }
+	| if_statement ELSE block { return [*val[0], [:ELSE, val[2]]] }
 
 	# start_block : CURLY_BRACKET_L new_lines
 	# end_block : CURLY_BRACKET_R new_lines

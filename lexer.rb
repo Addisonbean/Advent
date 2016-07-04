@@ -63,6 +63,9 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/if/))
          action { [:IF, nil] }
 
+      when (text = @ss.scan(/else/))
+         action { [:ELSE, nil] }
+
       when (text = @ss.scan(/null/))
          action { [:NULL, nil] }
 

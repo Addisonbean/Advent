@@ -37,6 +37,10 @@ module MyLangCore
 		str[1..-2]
 	end
 
+	def MyLangCore.not(v)
+		!v
+	end
+
 	# def MyLangCore.new_line
 	# 	CALL_STACK << [] unless CALL_STACK[-1] == []
 	# end
@@ -70,11 +74,23 @@ class MyLang
 		when :OPERATOR
 			MyLangCore.binary_operator(ary.shift, parse(ary.shift), parse(ary.shift))
 		when :CALL
-			parse(ary.shift[1])
+			call_block(ary.shift)
 		when :IF
-			parse(ary.shift[1]) if parse(ary.shift)
+			if parse(ary.shift)
+				res = call_block(ary.shift)
+				ary.shift while ary[0] && ary[0][0] == :ELSE
+				res
+			else
+				ary.shift
+				els = ary.shift
+				els ? call_block(els[1]) : nil
+			end
 		end
 		ary.empty? ? val : parse(ary)
+	end
+
+	def call_block(b)
+		parse(b[1])
 	end
 
 end

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative "my_lang_core"
+require_relative "../my_lang_core"
 require "minitest/autorun"
 
 # check for errors once they exist
@@ -116,7 +116,7 @@ describe MyLang do
 		end
 	end
 
-	describe "if" do
+	describe "if statements" do
 		it "runs the block for truthy values" do
 			@lang.exec(%( if 5 { 4 } )).must_equal 4
 			@lang.exec(%(
@@ -125,6 +125,11 @@ if 5 {
 }
 			)).must_equal 4
 			@lang.exec(%( if NULL { 7 } )).must_equal nil
+		end
+
+		it "executes the 'else' block if the condition is fasly" do
+			@lang.exec(%( if null { 4 } else { 3 } )).must_equal 3
+			@lang.exec(%( if 5 { 4 } else { 3 } )).must_equal 4
 		end
 	end
 
