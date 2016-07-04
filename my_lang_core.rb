@@ -12,7 +12,8 @@ module MyLangCore
 		when Fixnum, Bignum, Float then :Number
 		when String then :String
 		when Array then :Block
-		when Nil then :Null
+		when NilClass then :Null
+		when TrueClass, FalseClass then :Bool
 		end
 	end
 
@@ -20,7 +21,17 @@ module MyLangCore
 	def MyLangCore.binary_operator(operator, val1, val2)
 		# TODO: add errors
 		# TODO: put `operators` somewhere else, trash `Value`
-		Value.operators[[MyLangCore.type_of(val1), MyLangCore.type_of(val2), operator]].call(val1, val2)
+		op = Value.operators[[MyLangCore.type_of(val1), MyLangCore.type_of(val2), operator]]
+		op = Value.operators[[:Any, MyLangCore.type_of(val2), operator]] unless op
+		op = Value.operators[[MyLangCore.type_of(val1), :Any, operator]] unless op
+		op = Value.operators[[:Any, :Any, operator]] unless op
+		op.call(val1, val2)
+	end
+
+	def MyLangCore.unary_operator(operator, val)
+		op = Value.operators[[MyLangCore.type_of(val), operator]]
+		op = Value.operators[[:Any, operator]] unless op
+		op.call(val)
 	end
 
 	# TODO: check if var already exists
@@ -63,16 +74,16 @@ class MyLang
 
 	def parse(ary)
 		val = case ary.shift
-		when :NUMBER, :STRING, :BLOCK # TODO? make this line: `when :LITERAL`
+		when :NULL, :NUMBER, :BOOL, :STRING, :BLOCK # TODO? make this line: `when :LITERAL`
 			ary.shift
-		when :NULL
-			nil
 		when :VAR
 			MyLangCore.get_var(ary.shift)
 		when :ASSIGN
 			MyLangCore.new_variable(ary.shift, parse(ary.shift))
-		when :OPERATOR
+		when :BOPERATOR
 			MyLangCore.binary_operator(ary.shift, parse(ary.shift), parse(ary.shift))
+		when :UOPERATOR
+			MyLangCore.unary_operator(ary.shift, parse(ary.shift))
 		when :CALL
 			call_block(ary.shift)
 		when :IF
@@ -106,7 +117,14 @@ class Value
 		[:Number, :Number, :*] => -> (x, y) { x * y },
 		[:Number, :Number, :/] => -> (x, y) { x / y },
 		[:String, :String, :+] => -> (x, y) { x + y },
-		[:String, :Number, :*] => -> (x, y) { x * y }
+		[:String, :Number, :*] => -> (x, y) { x * y },
+		[:Any, :Any, :==] => -> (x, y) { x == y },
+		[:Any, :Any, :!=] => -> (x, y) { x != y},
+		[:Any, :Any, :<] => -> (x, y) { x < y },
+		[:Any, :Any, :>] => -> (x, y) { x > y },
+		[:Any, :Any, :<=] => -> (x, y) { x <= y },
+		[:Any, :Any, :>=] => -> (x, y) { x >= y },
+		[:Any, :!] => -> (x) { MyLangCore.not(x) }
 	}
 
 	def self.operators

@@ -1,12 +1,12 @@
 class MyLangParser
 prechigh
 	left NEW_LINE
-	left LEFT_PARENTHESIS
-	left RIGHT_PARENTHESIS
-	left MULTIPLY
-	left DIVIDE
-	left ADD
-	left SUBTRACT
+	left LEFT_PARENTHESIS RIGHT_PARENTHESIS
+	left NOT_OP
+	left MULTIPLY DIVIDE
+	left ADD SUBTRACT
+	left CMP_OP CMP_EQ_OP
+	left EQ_OP
 	right EQUALS
 preclow
 
@@ -20,18 +20,26 @@ rule
 
 	value : NUMBER { return [:NUMBER, val[0]] }
 	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
-	| NULL { return [:NULL] }
+	| NULL { return [:NULL, nil] }
+	| bool
 	# | literal { return [:LITERAL, val[0]] }
 	| assignment
 	# make these there own section, like: | OPERATION { return MyLangCore.binary_operator(val[0], val[2], val[1]) }
-	| value MULTIPLY value { return [:OPERATOR, val[1], val[0], val[2]] }
-	| value DIVIDE value { return [:OPERATOR, val[1], val[0], val[2]] }
-	| value ADD value { return [:OPERATOR, val[1], val[0], val[2]] }
-	| value SUBTRACT value { return [:OPERATOR, val[1], val[0], val[2]] }
+	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| value DIVIDE value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| value ADD value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| value SUBTRACT value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| NOT_OP value { return [:UOPERATOR, val[0], val[1]] }
+	| value EQ_OP value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| value CMP_OP value { return [:BOPERATOR, val[1], val[0], val[2]] }
+	| value CMP_EQ_OP value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| LEFT_PARENTHESIS value RIGHT_PARENTHESIS { return val[1] }
 	| VAR { return [:VAR, val[0]] }
 	| block
 	| call_block
+
+	bool : TRUE { return [:BOOL, val[0]] }
+	| FALSE { return [:BOOL, val[0]] }
 
 	assignment : VAR EQUALS value { return [:ASSIGN, val[0], val[2]] }
 

@@ -100,6 +100,46 @@ describe MyLang do
 		# @lang.exec("{ a, b in a + b }(5, 4)")
 	end
 
+	describe "booleans" do
+		it "works?" do
+			@lang.exec("true").must_equal true
+			@lang.exec("false").must_equal false
+			@lang.exec("null").must_equal nil
+		end
+	end
+
+	describe "boolean logic" do
+		it "does equalities" do
+			@lang.exec("1 == 1").must_equal true
+			@lang.exec("1 != 1").must_equal false
+			@lang.exec("1 == 3").must_equal false
+			@lang.exec("1 != 3").must_equal true
+			@lang.exec(%{'a' == 'a'}).must_equal true
+			@lang.exec(%{'a' != 'a'}).must_equal false
+			@lang.exec(%{'a' == 'b'}).must_equal false
+			@lang.exec(%{'a' != 'b'}).must_equal true
+		end
+
+		it "does inequalities" do
+			@lang.exec("1 > 1").must_equal false
+			@lang.exec("1 >= 1").must_equal true
+			@lang.exec("1 > 3").must_equal false
+			@lang.exec("1 >= 3").must_equal false
+			@lang.exec("3 > 1").must_equal true
+			@lang.exec("3 >= 1").must_equal true
+		end
+
+		it "inverts truthy-ness" do
+			@lang.exec("!1").must_equal false
+			@lang.exec("!0").must_equal false
+			@lang.exec("!'a'").must_equal false
+			@lang.exec("!''").must_equal false
+			@lang.exec("!true").must_equal false
+			@lang.exec("!false").must_equal true
+			@lang.exec("!null").must_equal true
+		end
+	end
+
 	describe "new lines and semicolons" do
 		it "allows semicolons to break up lines" do
 			@lang.exec("a = 9; b = 10")

@@ -4,6 +4,14 @@ macro
 	# BLANK [\s]+
 	IF if
 	ELSE else
+	NULL null
+	TRUE true
+	FALSE false
+	NOT_OP !
+	EQ_OP (==|!=)
+	CMP_EQ_OP (<=|>=)
+	CMP_OP (<|>)
+	# all keywords should go above here
 	VAR [a-zA-Z_]\w*
 	NUMBER \d+
 	MULTIPLY \*
@@ -18,7 +26,6 @@ macro
 	CURLY_BRACKET_L {
 	CURLY_BRACKET_R }
 	NEW_LINE (\n|;)
-	NULL null
 	# NEW_LINE ;
 	
 rule
@@ -26,6 +33,12 @@ rule
 	{IF} { [:IF, nil] }
 	{ELSE} { [:ELSE, nil] }
 	{NULL} { [:NULL, nil] }
+	{TRUE} { [:TRUE, true] }
+	{FALSE} { [:FALSE, false] }
+	{EQ_OP} { [:EQ_OP, text.to_sym] }
+	{CMP_EQ_OP} { [:CMP_EQ_OP, text.to_sym] }
+	{CMP_OP} { [:CMP_OP, text.to_sym] }
+	{NOT_OP} { [:NOT_OP, text.to_sym] }
 	{VAR} { [:VAR, text.to_sym] }
 	{NUMBER} { [:NUMBER, text.to_i] }
 	{MULTIPLY} { [:MULTIPLY, text.to_sym] }

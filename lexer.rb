@@ -69,6 +69,24 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/null/))
          action { [:NULL, nil] }
 
+      when (text = @ss.scan(/true/))
+         action { [:TRUE, true] }
+
+      when (text = @ss.scan(/false/))
+         action { [:FALSE, false] }
+
+      when (text = @ss.scan(/(==|!=)/))
+         action { [:EQ_OP, text.to_sym] }
+
+      when (text = @ss.scan(/(<=|>=)/))
+         action { [:CMP_EQ_OP, text.to_sym] }
+
+      when (text = @ss.scan(/(<|>)/))
+         action { [:CMP_OP, text.to_sym] }
+
+      when (text = @ss.scan(/!/))
+         action { [:NOT_OP, text.to_sym] }
+
       when (text = @ss.scan(/[a-zA-Z_]\w*/))
          action { [:VAR, text.to_sym] }
 
