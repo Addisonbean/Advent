@@ -57,7 +57,7 @@ class MyLangParser < Racc::Parser
     token = case @state
     when nil
       case
-      when (text = @ss.scan(/[\s]+/))
+      when (text = @ss.scan(/[ \t]+/))
         ;
 
       when (text = @ss.scan(/[a-zA-Z_]\w*/))

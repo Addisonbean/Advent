@@ -79,12 +79,38 @@ describe MyLang do
 	end
 
 	# this is what I need to implement
-	# describe "blocks" do
-	# 	@lang.exec("{ a, b in a + b }(5, 4)")
-	# end
+	describe "blocks" do
+		it "returns the right value" do
+			@lang.exec("a = 4")
+			@lang.exec("b = 5")
+			@lang.exec("{ a + b }()").must_equal 9
+		end
+
+		it "handles multiline blocks" do
+			@lang.exec("a = 3")
+			@lang.exec("b = 7")
+			@lang.exec(%<{
+	a * b;
+}()>).must_equal 21
+		end
+		# @lang.exec("{ a, b in a + b }(5, 4)")
+	end
+
+	describe "new lines and semicolons" do
+		it "allows semicolons to break up lines" do
+			@lang.exec("a = 9; b = 10")
+			# @lang.exec("a + b").must_equal 19
+			@lang.exec("a").must_equal 9
+			@lang.exec("b").must_equal 10
+		end
+
+		it "allows newlines (\\n) to break up lines" do
+			@lang.exec("a = 9\n b = 10")
+			# @lang.exec("a + b").must_equal 19
+			@lang.exec("a").must_equal 9
+			@lang.exec("b").must_equal 10
+		end
+	end
 
 end
-
-# l = MyLang.new
-# p l.parse("{ 1 + 2 }")
 

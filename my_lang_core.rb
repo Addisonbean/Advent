@@ -57,16 +57,19 @@ class MyLang
 	end
 
 	def parse(ary)
-		case ary[0]
+		val = case ary.shift
 		when :NUMBER, :STRING, :BLOCK # TODO? make this line: `when :LITERAL`
-			ary[1]
+			ary.shift
 		when :VAR
-			MyLangCore.get_var(ary[1])
+			MyLangCore.get_var(ary.shift)
 		when :ASSIGN
-			MyLangCore.new_variable(ary[1], parse(ary[2]))
+			MyLangCore.new_variable(ary.shift, parse(ary.shift))
 		when :OPERATOR
-			MyLangCore.binary_operator(ary[1], parse(ary[2]), parse(ary[3]))
+			MyLangCore.binary_operator(ary.shift, parse(ary.shift), parse(ary.shift))
+		when :CALL
+			parse(ary.shift[1])
 		end
+		ary.empty? ? val : parse(ary)
 	end
 
 end

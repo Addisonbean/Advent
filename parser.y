@@ -1,5 +1,6 @@
 class MyLangParser
 prechigh
+	left NEW_LINE
 	left LEFT_PARENTHESIS
 	left RIGHT_PARENTHESIS
 	left MULTIPLY
@@ -10,11 +11,15 @@ prechigh
 preclow
 
 rule
-	line: expression
-	# | NEW_LINE { MyLangCore.new_line } # or nothing?
-	| NEW_LINE
+	# line: expression
+	# # | NEW_LINE { MyLangCore.new_line } # or nothing?
+	# | NEW_LINE { return }
 
-	expression : value
+	expression : value 
+	| expression NEW_LINE { return val[0] }
+	| NEW_LINE expression { return val[1] }
+	| NEW_LINE 
+	| expression NEW_LINE expression { return [*val[0], *val[2]] }
 
 	value : NUMBER { return [:NUMBER, val[0]] }
 	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
@@ -28,14 +33,17 @@ rule
 	| LEFT_PARENTHESIS value RIGHT_PARENTHESIS { return val[1] }
 	| VAR { return [:VAR, val[0]] }
 	| block
+	| call_block
 
 	assignment : VAR EQUALS value { return [:ASSIGN, val[0], val[2]] }
 
 	block : CURLY_BRACKET_L expression CURLY_BRACKET_R { return [:BLOCK, val[1]] }
 
+	# TODO: make this value instead of block
+	call_block : value LEFT_PARENTHESIS RIGHT_PARENTHESIS { return [:CALL, val[0]] }
 
-	start_block : CURLY_BRACKET_L new_lines
-	end_block : CURLY_BRACKET_R new_lines
+	# start_block : CURLY_BRACKET_L new_lines
+	# end_block : CURLY_BRACKET_R new_lines
 	# block : CURLY_BRACKET_L new_lines expression new_lines CURLY_BRACKET_R { return [:BLOCK, val[1]] }
 
 	# literal : NUMBER

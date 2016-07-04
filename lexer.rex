@@ -1,6 +1,7 @@
 class MyLangParser
 macro
-	BLANK [\s]+
+	BLANK [\ \t]+
+	# BLANK [\s]+
 	VAR [a-zA-Z_]\w*
 	NUMBER \d+
 	MULTIPLY \*
@@ -15,6 +16,7 @@ macro
 	CURLY_BRACKET_L {
 	CURLY_BRACKET_R }
 	NEW_LINE (\n|;)
+	# NEW_LINE ;
 	
 rule
 	{BLANK} # nah
