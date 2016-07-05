@@ -46,6 +46,10 @@ describe MyLang do
 		it "does multi-level parentheses" do
 			@lang.exec("(3 - (2 - 1)) * 4").must_equal 8
 		end
+
+		it "does powers" do
+			@lang.exec("(3 - (2 - 1)) ** 2 ** 3 * 4").must_equal 1024
+		end
 	end
 
 	describe "strings" do

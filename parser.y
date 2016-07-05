@@ -3,6 +3,7 @@ prechigh
 	left NEW_LINE
 	left LEFT_PARENTHESIS RIGHT_PARENTHESIS
 	left NOT_OP
+	right POW
 	left MULTIPLY DIVIDE
 	left ADD SUBTRACT
 	left CMP_OP CMP_EQ_OP
@@ -25,6 +26,7 @@ rule
 	# | literal { return [:LITERAL, val[0]] }
 	| assignment
 	# make these there own section, like: | OPERATION { return MyLangCore.binary_operator(val[0], val[2], val[1]) }
+	| value POW value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value DIVIDE value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value ADD value { return [:BOPERATOR, val[1], val[0], val[2]] }

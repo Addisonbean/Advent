@@ -15,6 +15,7 @@ macro
 	# all keywords should go above here
 	VAR [a-zA-Z_]\w*
 	NUMBER \d+
+	POW \*\*
 	MULTIPLY \*
 	DIVIDE \/
 	ADD \+
@@ -44,6 +45,7 @@ rule
 	{NOT_OP} { [:NOT_OP, text.to_sym] }
 	{VAR} { [:VAR, text.to_sym] }
 	{NUMBER} { [:NUMBER, text.to_i] }
+	{POW} { [:POW, text.to_sym] }
 	{MULTIPLY} { [:MULTIPLY, text.to_sym] }
 	{DIVIDE} { [:DIVIDE, text.to_sym] }
 	{ADD} { [:ADD, text.to_sym] }

@@ -96,6 +96,9 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/\d+/))
          action { [:NUMBER, text.to_i] }
 
+      when (text = @ss.scan(/\*\*/))
+         action { [:POW, text.to_sym] }
+
       when (text = @ss.scan(/\*/))
          action { [:MULTIPLY, text.to_sym] }
 

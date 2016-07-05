@@ -169,6 +169,7 @@ class Value
 		[:Number, :Number, :-] => -> (x, y) { x - y },
 		[:Number, :Number, :*] => -> (x, y) { x * y },
 		[:Number, :Number, :/] => -> (x, y) { x / y },
+		[:Number, :Number, :**] => -> (x, y) { x ** y },
 		[:String, :String, :+] => -> (x, y) { x + y },
 		[:String, :Number, :*] => -> (x, y) { x * y },
 		[:Any, :Any, :==] => -> (x, y) { x == y },

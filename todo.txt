@@ -3,6 +3,13 @@ Add:
 	let $0, $1, ... be used to access block arguments?
 	negative numbers (-a = -1 * a)
 	allow blocks like if statements to not make a new scope
+	add an operator or bin_operator section in the parser
+	remove the Value class and related things
+	add helpful comments and documentation
+	let numbers be floats
+	check if my order of operations and associativity are correct
+	add an import keyword
+		include a standard library
 	add errors for:
 		wrong arity
 		unknown vars
