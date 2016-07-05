@@ -1,7 +1,8 @@
 class MyLangParser
 prechigh
-	left NEW_LINE
-	left LEFT_PARENTHESIS RIGHT_PARENTHESIS
+	left NEW_LINE # or nonassoc?
+	left LEFT_PARENTHESIS RIGHT_PARENTHESIS # or nonassoc?
+	nonassoc UMINUS
 	left NOT_OP
 	right POW
 	left MULTIPLY DIVIDE
@@ -31,6 +32,7 @@ rule
 	| block
 	| call_block
 
+
 	boperator : value POW value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value DIVIDE value { return [:BOPERATOR, val[1], val[0], val[2]] }
@@ -41,6 +43,7 @@ rule
 	| value CMP_EQ_OP value { return [:BOPERATOR, val[1], val[0], val[2]] }
 
 	uoperator : NOT_OP value { return [:UOPERATOR, val[0], val[1]] }
+	| SUBTRACT value =UMINUS { return [:UOPERATOR, val[0], val[1]] }
 
 	bool : TRUE
 	| FALSE

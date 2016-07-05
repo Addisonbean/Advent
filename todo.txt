@@ -1,13 +1,11 @@
 Add:
 	bitwise operators
 	let $0, $1, ... be used to access block arguments? or no?
-	unary minus/negative numbers (-a = -1 * a)
 	allow blocks like if statements to not make a new scope
 	make separate float and integer classes
 	check if my order of operations and associativity are correct
 	make a SoAndSoLiteralConverable method thing, like swift
 	fix `rake spec`
-	get rid of the `scope.scope` crap, make it more clear
 	make if statements values, not expressions
 	add more control flow
 	add enums

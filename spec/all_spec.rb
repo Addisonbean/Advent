@@ -50,6 +50,16 @@ describe MyLang do
 		it "does powers" do
 			@lang.exec("(3 - (2 - 1)) ** 2 ** 3 * 4").must_equal 1024
 		end
+
+		it "uses a left associative subtraction" do
+			@lang.exec("3 - 2 - 1").must_equal 0
+		end
+
+		it "uses a unary minus sign" do # reword this?
+			@lang.exec("-3").must_equal -3
+			@lang.exec("9 + -4 * -(3)").must_equal 21
+			@lang.exec("(9 + -4) * -(3)").must_equal -15
+		end
 	end
 
 	describe "strings" do

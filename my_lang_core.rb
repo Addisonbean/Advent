@@ -54,7 +54,9 @@ module MyLangCore
 		[:Any, :Any, :>] => -> (x, y) { x > y },
 		[:Any, :Any, :<=] => -> (x, y) { x <= y },
 		[:Any, :Any, :>=] => -> (x, y) { x >= y },
-		[:Any, :!] => -> (x) { MyLangCore.not(x) }
+		# [:Any, :!] => -> (x) { !x },
+		[:Any, :!] => -> (x) { MyLangCore.not(x) },
+		[:Number, :-] => -> (x) { -x }
 	}
 
 end
@@ -127,7 +129,7 @@ class MyLang
 	def call_block(b, scope, args = [])
 		args.each_with_index do |arg, i|
 			param = b.params[i]
-			b.scope.scope[param] = parse(arg, scope)
+			b.scope.real_scope[param] = parse(arg, scope)
 		end
 		parse(b.tree, b.scope)
 	end
@@ -141,15 +143,15 @@ class Scope
 
 	VAR_NOT_FOUND = Special.new
 
-	attr_accessor :scope, :parent_scope
+	attr_accessor :scope, :parent_scope, :real_scope
 
 	def initialize(parent_scope = nil)
 		@parent_scope = parent_scope
-		@scope = Hash.new(Scope::VAR_NOT_FOUND)
+		@real_scope = Hash.new(Scope::VAR_NOT_FOUND)
 	end
 	
 	def [](var)
-		val = @scope[var]
+		val = @real_scope[var]
 		if val == Scope::VAR_NOT_FOUND && @parent_scope
 			val = @parent_scope[var]
 		end
@@ -159,12 +161,12 @@ class Scope
 
 	def []=(var, val)
 		s = get_scope_of(var)
-		s ? s.scope[var] = val : @scope[var] = val
+		s ? s.real_scope[var] = val : @real_scope[var] = val
 	end
 
 	def get_scope_of(var)
 		correct = nil
-		if @scope[var] == Scope::VAR_NOT_FOUND 
+		if @real_scope[var] == Scope::VAR_NOT_FOUND 
 			correct = @parent_scope ? @parent_scope.get_scope_of(var) : nil
 		else
 			correct = self
