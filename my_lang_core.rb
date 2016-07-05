@@ -18,16 +18,16 @@ module MyLangCore
 	def MyLangCore.binary_operator(operator, val1, val2)
 		# TODO: add errors
 		# TODO: put `operators` somewhere else, trash `Value`
-		op = Value.operators[[MyLangCore.type_of(val1), MyLangCore.type_of(val2), operator]]
-		op = Value.operators[[:Any, MyLangCore.type_of(val2), operator]] unless op
-		op = Value.operators[[MyLangCore.type_of(val1), :Any, operator]] unless op
-		op = Value.operators[[:Any, :Any, operator]] unless op
+		op = OPERATORS[[MyLangCore.type_of(val1), MyLangCore.type_of(val2), operator]]
+		op = OPERATORS[[:Any, MyLangCore.type_of(val2), operator]] unless op
+		op = OPERATORS[[MyLangCore.type_of(val1), :Any, operator]] unless op
+		op = OPERATORS[[:Any, :Any, operator]] unless op
 		op.call(val1, val2)
 	end
 
 	def MyLangCore.unary_operator(operator, val)
-		op = Value.operators[[MyLangCore.type_of(val), operator]]
-		op = Value.operators[[:Any, operator]] unless op
+		op = OPERATORS[[MyLangCore.type_of(val), operator]]
+		op = OPERATORS[[:Any, operator]] unless op
 		op.call(val)
 	end
 
@@ -40,13 +40,22 @@ module MyLangCore
 		!v
 	end
 
-	# def MyLangCore.new_line
-	# 	CALL_STACK << [] unless CALL_STACK[-1] == []
-	# end
-
-	# def MyLangCore.add_call(c)
-	# 	CALL_STACK[-1] << c
-	# end
+	OPERATORS = {
+		[:Number, :Number, :+] => -> (x, y) { x + y },
+		[:Number, :Number, :-] => -> (x, y) { x - y },
+		[:Number, :Number, :*] => -> (x, y) { x * y },
+		[:Number, :Number, :/] => -> (x, y) { x / y },
+		[:Number, :Number, :**] => -> (x, y) { x ** y },
+		[:String, :String, :+] => -> (x, y) { x + y },
+		[:String, :Number, :*] => -> (x, y) { x * y },
+		[:Any, :Any, :==] => -> (x, y) { x == y },
+		[:Any, :Any, :!=] => -> (x, y) { x != y},
+		[:Any, :Any, :<] => -> (x, y) { x < y },
+		[:Any, :Any, :>] => -> (x, y) { x > y },
+		[:Any, :Any, :<=] => -> (x, y) { x <= y },
+		[:Any, :Any, :>=] => -> (x, y) { x >= y },
+		[:Any, :!] => -> (x) { MyLangCore.not(x) }
+	}
 
 end
 
@@ -73,24 +82,34 @@ class MyLang
 		parse(@parser.parse(code))
 	end
 
+	# NEVER call `parse` without supplying `scope` except in `exec`
 	def parse(ary, scope = @global_scope)
 		val = case ary.shift
+		# [:TYPE, ruby_value]
 		when :NULL, :NUMBER, :BOOL, :STRING # TODO? make this line: `when :LITERAL`
 			ary.shift
+		# [:BLOCK, Block]
 		when :BLOCK
 			b = ary.shift
 			b.scope = scope.make_child_scope
 			b
+		# [:VAR, Symbol]
 		when :VAR
 			scope[ary.shift]
+		# [:ASSIGN, Symbol, [value]]
 		when :ASSIGN
 			scope[ary.shift] = parse(ary.shift, scope)
+		# [:BOPERATOR, Symbol, [value], [value]]
 		when :BOPERATOR
 			MyLangCore.binary_operator(ary.shift, parse(ary.shift, scope), parse(ary.shift, scope))
+		# [:UOPERATOR, [value]]
 		when :UOPERATOR
 			MyLangCore.unary_operator(ary.shift, parse(ary.shift, scope))
+		# [:CALL, [block_value], [:ARGS, [arg1_value], [arg2_value], ...]]
 		when :CALL
 			call_block(parse(ary.shift, scope), scope, ary.shift[1..-1])
+		# [:IF, [cond_value], [block_value]] ||
+		# [:IF, [cond_value], [block_value], [:ELSE, [block_value]]]
 		when :IF
 			if parse(ary.shift, scope)
 				res = call_block(parse(ary.shift, scope), scope)
@@ -163,23 +182,6 @@ end
 class Value
 
 	attr_accessor :value, :type
-
-	@@operators = {
-		[:Number, :Number, :+] => -> (x, y) { x + y },
-		[:Number, :Number, :-] => -> (x, y) { x - y },
-		[:Number, :Number, :*] => -> (x, y) { x * y },
-		[:Number, :Number, :/] => -> (x, y) { x / y },
-		[:Number, :Number, :**] => -> (x, y) { x ** y },
-		[:String, :String, :+] => -> (x, y) { x + y },
-		[:String, :Number, :*] => -> (x, y) { x * y },
-		[:Any, :Any, :==] => -> (x, y) { x == y },
-		[:Any, :Any, :!=] => -> (x, y) { x != y},
-		[:Any, :Any, :<] => -> (x, y) { x < y },
-		[:Any, :Any, :>] => -> (x, y) { x > y },
-		[:Any, :Any, :<=] => -> (x, y) { x <= y },
-		[:Any, :Any, :>=] => -> (x, y) { x >= y },
-		[:Any, :!] => -> (x) { MyLangCore.not(x) }
-	}
 
 	def self.operators
 		@@operators
