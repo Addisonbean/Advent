@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require_relative "my_lang_core"
+
+lang = MyLang.new
+
+i = ARGF.read
+puts
+p lang.exec(i)
+
