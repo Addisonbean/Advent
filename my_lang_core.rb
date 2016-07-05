@@ -108,7 +108,7 @@ class MyLang
 	def call_block(b, scope, args = [])
 		args.each_with_index do |arg, i|
 			param = b.params[i]
-			b.scope[param] = parse(arg, scope)
+			b.scope.scope[param] = parse(arg, scope)
 		end
 		parse(b.tree, b.scope)
 	end
@@ -121,6 +121,8 @@ end
 class Scope
 
 	VAR_NOT_FOUND = Special.new
+
+	attr_accessor :scope, :parent_scope
 
 	def initialize(parent_scope = nil)
 		@parent_scope = parent_scope
@@ -138,15 +140,15 @@ class Scope
 
 	def []=(var, val)
 		s = get_scope_of(var)
-		s ? s[var] = val : @scope[var] = val
+		s ? s.scope[var] = val : @scope[var] = val
 	end
 
 	def get_scope_of(var)
 		correct = nil
 		if @scope[var] == Scope::VAR_NOT_FOUND 
-			@parent_scope ? correct = @parent_scope.get_scope_of(var) : nil
+			correct = @parent_scope ? @parent_scope.get_scope_of(var) : nil
 		else
-			correct = @scope
+			correct = self
 		end
 		correct
 	end

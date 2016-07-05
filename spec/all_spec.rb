@@ -101,7 +101,20 @@ describe MyLang do
 		it "calls blocks with arguments" do
 			@lang.exec("{ v1, v2 in v2 * (v1 - 1) }(9, 10)").must_equal 80
 		end
-		# @lang.exec("{ a, b in a + b }(5, 4)")
+
+		it "uses the parent scope" do
+			@lang.exec("a = 2; { v1, v2 in v2 * (v1 - a) }(9, 10)").must_equal 70
+			@lang.exec("a = 2; { a = 4 }(); a").must_equal 4
+		end
+
+		it "uses it's own scope" do
+			@lang.exec("a = 2; { a in a + 20 }(5)").must_equal 25
+		end
+
+		it "preserves the parent scope" do
+			@lang.exec("a = 2; { a in a = 4 }(5); a").must_equal 2
+			@lang.exec("a = 2; { a in a }(5); a").must_equal 2
+		end
 	end
 
 	describe "booleans" do
