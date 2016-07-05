@@ -1,4 +1,7 @@
 Add:
 	bitwise operators
 	allow arguments in function calls
+	let $0, $1, ... be used to access block arguments?
+	negative numbers (-a = -1 * a)
+	allow blocks like if statements to not make a new scope
 

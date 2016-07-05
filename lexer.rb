@@ -75,6 +75,9 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/false/))
          action { [:FALSE, false] }
 
+      when (text = @ss.scan(/in/))
+         action { [:IN, text.to_sym] }
+
       when (text = @ss.scan(/(==|!=)/))
          action { [:EQ_OP, text.to_sym] }
 
@@ -122,6 +125,9 @@ class MyLangParser < Racc::Parser
 
       when (text = @ss.scan(/}/))
          action { [:CURLY_BRACKET_R, text.to_sym] }
+
+      when (text = @ss.scan(/,/))
+         action { [:COMMA, text.to_sym] }
 
       when (text = @ss.scan(/(\n|;)/))
          action { [:NEW_LINE, nil] }

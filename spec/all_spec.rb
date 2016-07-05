@@ -97,6 +97,10 @@ describe MyLang do
 	a * b;
 }()>).must_equal 21
 		end
+
+		it "calls blocks with arguments" do
+			@lang.exec("{ v1, v2 in v2 * (v1 - 1) }(9, 10)").must_equal 80
+		end
 		# @lang.exec("{ a, b in a + b }(5, 4)")
 	end
 

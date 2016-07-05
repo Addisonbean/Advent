@@ -16,6 +16,11 @@ task :parser do
 	`racc parser.y -o parser.rb`
 end
 
+desc "Tests things"
+task :spec do
+	`./spec/all_spec.rb`
+end
+
 desc "Generate Lexer and Parser"
 task :generate => [:lexer, :parser]
 

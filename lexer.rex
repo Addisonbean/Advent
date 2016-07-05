@@ -7,6 +7,7 @@ macro
 	NULL null
 	TRUE true
 	FALSE false
+	IN in
 	NOT_OP !
 	EQ_OP (==|!=)
 	CMP_EQ_OP (<=|>=)
@@ -25,6 +26,7 @@ macro
 	# STRING ('[^']*?')|("[^"]*?")
 	CURLY_BRACKET_L {
 	CURLY_BRACKET_R }
+	COMMA ,
 	NEW_LINE (\n|;)
 	# NEW_LINE ;
 	
@@ -35,6 +37,7 @@ rule
 	{NULL} { [:NULL, nil] }
 	{TRUE} { [:TRUE, true] }
 	{FALSE} { [:FALSE, false] }
+	{IN} { [:IN, text.to_sym] }
 	{EQ_OP} { [:EQ_OP, text.to_sym] }
 	{CMP_EQ_OP} { [:CMP_EQ_OP, text.to_sym] }
 	{CMP_OP} { [:CMP_OP, text.to_sym] }
@@ -51,6 +54,7 @@ rule
 	{STRING} { [:STRING, text] }
 	{CURLY_BRACKET_L} { [:CURLY_BRACKET_L, text.to_sym] }
 	{CURLY_BRACKET_R} { [:CURLY_BRACKET_R, text.to_sym] }
+	{COMMA} { [:COMMA, text.to_sym] }
 	{NEW_LINE} { [:NEW_LINE, nil] }
 
 inner
