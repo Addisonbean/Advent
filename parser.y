@@ -2,8 +2,9 @@ class MyLangParser
 prechigh
 	left NEW_LINE
 	nonassoc LEFT_PARENTHESIS RIGHT_PARENTHESIS
-	nonassoc UMINUS NOT_OP
+	nonassoc NOT_OP
 	right POW
+	nonassoc UMINUS
 	left MULTIPLY DIVIDE
 	left ADD SUBTRACT
 	left CMP_OP CMP_EQ_OP

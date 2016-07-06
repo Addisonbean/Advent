@@ -9,6 +9,7 @@ Add:
 	make a SoAndSoLiteralConverable method thing, like swift
 	fix `rake spec`
 	make if statements values, not expressions
+	add the ternery operator
 	add more control flow
 	add enums
 	add subclasses
