@@ -8,7 +8,6 @@ Add:
 	check if my order of operations and associativity are correct
 	make a SoAndSoLiteralConverable method thing, like swift
 	fix `rake spec`
-	make if statements values, not expressions
 	add the ternery operator
 	add more control flow
 	add enums

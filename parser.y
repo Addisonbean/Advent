@@ -18,7 +18,6 @@ rule
 	| NEW_LINE expression { return val[1] }
 	| NEW_LINE
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
-	| if_statement
 
 	value : INTEGER { return [:INTEGER, val[0]] }
 	| FLOAT { return [:FLOAT, val[0]] }
@@ -32,7 +31,7 @@ rule
 	| VAR { return [:VAR, val[0]] }
 	| block
 	| call_block
-
+	| if_statement
 
 	boperator : value POW value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
