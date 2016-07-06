@@ -2,6 +2,8 @@ Add:
 	bitwise operators
 	let $0, $1, ... be used to access block arguments? or no?
 	allow blocks like if statements to not make a new scope
+	add += and related operators
+		++ and --?
 	make separate float and integer classes
 	check if my order of operations and associativity are correct
 	make a SoAndSoLiteralConverable method thing, like swift
@@ -15,5 +17,6 @@ Add:
 		wrong arity
 		unknown vars
 	add more helpful comments and documentation
+	try this/see if it's necessary: http://stackoverflow.com/a/10851447/1525759
 
 

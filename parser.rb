@@ -11,7 +11,7 @@ require 'racc/parser.rb'
 
 class MyLangParser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 88)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 87)
 	def parse(input)
 		scan_str(input)
 	end
@@ -319,14 +319,14 @@ Racc_debug_parser = false
 
 # reduce 1 omitted
 
-module_eval(<<'.,.,', 'parser.y', 16)
+module_eval(<<'.,.,', 'parser.y', 15)
   def _reduce_2(val, _values, result)
      return val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 17)
+module_eval(<<'.,.,', 'parser.y', 16)
   def _reduce_3(val, _values, result)
      return val[1] 
     result
@@ -335,7 +335,7 @@ module_eval(<<'.,.,', 'parser.y', 17)
 
 # reduce 4 omitted
 
-module_eval(<<'.,.,', 'parser.y', 19)
+module_eval(<<'.,.,', 'parser.y', 18)
   def _reduce_5(val, _values, result)
      return [*val[0], *val[2]] 
     result
@@ -344,28 +344,28 @@ module_eval(<<'.,.,', 'parser.y', 19)
 
 # reduce 6 omitted
 
-module_eval(<<'.,.,', 'parser.y', 22)
+module_eval(<<'.,.,', 'parser.y', 21)
   def _reduce_7(val, _values, result)
      return [:NUMBER, val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 23)
+module_eval(<<'.,.,', 'parser.y', 22)
   def _reduce_8(val, _values, result)
      return [:STRING, MyLangCore.str_escape(val[0])] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 24)
+module_eval(<<'.,.,', 'parser.y', 23)
   def _reduce_9(val, _values, result)
      return [:NULL, nil] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 25)
+module_eval(<<'.,.,', 'parser.y', 24)
   def _reduce_10(val, _values, result)
      return [:BOOL, val[0]] 
     result
@@ -378,14 +378,14 @@ module_eval(<<'.,.,', 'parser.y', 25)
 
 # reduce 13 omitted
 
-module_eval(<<'.,.,', 'parser.y', 29)
+module_eval(<<'.,.,', 'parser.y', 28)
   def _reduce_14(val, _values, result)
      return val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 30)
+module_eval(<<'.,.,', 'parser.y', 29)
   def _reduce_15(val, _values, result)
      return [:VAR, val[0]] 
     result
@@ -396,70 +396,70 @@ module_eval(<<'.,.,', 'parser.y', 30)
 
 # reduce 17 omitted
 
-module_eval(<<'.,.,', 'parser.y', 35)
+module_eval(<<'.,.,', 'parser.y', 34)
   def _reduce_18(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 36)
+module_eval(<<'.,.,', 'parser.y', 35)
   def _reduce_19(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 37)
+module_eval(<<'.,.,', 'parser.y', 36)
   def _reduce_20(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 38)
+module_eval(<<'.,.,', 'parser.y', 37)
   def _reduce_21(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 39)
+module_eval(<<'.,.,', 'parser.y', 38)
   def _reduce_22(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 40)
+module_eval(<<'.,.,', 'parser.y', 39)
   def _reduce_23(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 41)
+module_eval(<<'.,.,', 'parser.y', 40)
   def _reduce_24(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 42)
+module_eval(<<'.,.,', 'parser.y', 41)
   def _reduce_25(val, _values, result)
      return [:BOPERATOR, val[1], val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 44)
+module_eval(<<'.,.,', 'parser.y', 43)
   def _reduce_26(val, _values, result)
      return [:UOPERATOR, val[0], val[1]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 45)
+module_eval(<<'.,.,', 'parser.y', 44)
   def _reduce_27(val, _values, result)
      return [:UOPERATOR, val[0], val[1]] 
     result
@@ -470,49 +470,49 @@ module_eval(<<'.,.,', 'parser.y', 45)
 
 # reduce 29 omitted
 
-module_eval(<<'.,.,', 'parser.y', 50)
+module_eval(<<'.,.,', 'parser.y', 49)
   def _reduce_30(val, _values, result)
      return [:ASSIGN, val[0], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 52)
+module_eval(<<'.,.,', 'parser.y', 51)
   def _reduce_31(val, _values, result)
      return [:BLOCK, Block.new(val[1])] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 53)
+module_eval(<<'.,.,', 'parser.y', 52)
   def _reduce_32(val, _values, result)
      return [:BLOCK, Block.new(val[3], val[1])] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 55)
+module_eval(<<'.,.,', 'parser.y', 54)
   def _reduce_33(val, _values, result)
      return [:CALL, val[0], [:ARGS, *val[2]]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 56)
+module_eval(<<'.,.,', 'parser.y', 55)
   def _reduce_34(val, _values, result)
      return [:CALL, val[0], [:ARGS]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 58)
+module_eval(<<'.,.,', 'parser.y', 57)
   def _reduce_35(val, _values, result)
      return [:IF, val[1], val[2]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 59)
+module_eval(<<'.,.,', 'parser.y', 58)
   def _reduce_36(val, _values, result)
      return [*val[0], [:ELSE, val[2]]] 
     result
@@ -523,14 +523,14 @@ module_eval(<<'.,.,', 'parser.y', 59)
 
 # reduce 38 omitted
 
-module_eval(<<'.,.,', 'parser.y', 64)
+module_eval(<<'.,.,', 'parser.y', 63)
   def _reduce_39(val, _values, result)
      return [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 65)
+module_eval(<<'.,.,', 'parser.y', 64)
   def _reduce_40(val, _values, result)
      return [val[0], *val[2]] 
     result
@@ -541,14 +541,14 @@ module_eval(<<'.,.,', 'parser.y', 65)
 
 # reduce 42 omitted
 
-module_eval(<<'.,.,', 'parser.y', 70)
+module_eval(<<'.,.,', 'parser.y', 69)
   def _reduce_43(val, _values, result)
      return [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 71)
+module_eval(<<'.,.,', 'parser.y', 70)
   def _reduce_44(val, _values, result)
      return [val[0], *val[2]] 
     result

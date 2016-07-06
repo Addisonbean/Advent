@@ -1,9 +1,8 @@
 class MyLangParser
 prechigh
-	left NEW_LINE # or nonassoc?
-	left LEFT_PARENTHESIS RIGHT_PARENTHESIS # or nonassoc?
-	nonassoc UMINUS
-	left NOT_OP
+	left NEW_LINE
+	nonassoc LEFT_PARENTHESIS RIGHT_PARENTHESIS
+	nonassoc UMINUS NOT_OP
 	right POW
 	left MULTIPLY DIVIDE
 	left ADD SUBTRACT
