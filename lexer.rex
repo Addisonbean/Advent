@@ -14,7 +14,8 @@ macro
 	CMP_OP (<|>)
 	# all keywords should go above here
 	VAR [a-zA-Z_]\w*
-	NUMBER \d+
+	FLOAT \d+\.\d+
+	INTEGER \d+
 	POW \*\*
 	MULTIPLY \*
 	DIVIDE \/
@@ -44,7 +45,8 @@ rule
 	{CMP_OP} { [:CMP_OP, text.to_sym] }
 	{NOT_OP} { [:NOT_OP, text.to_sym] }
 	{VAR} { [:VAR, text.to_sym] }
-	{NUMBER} { [:NUMBER, text.to_i] }
+	{FLOAT} { [:FLOAT, Float(text)] }
+	{INTEGER} { [:INTEGER, text.to_i] }
 	{POW} { [:POW, text.to_sym] }
 	{MULTIPLY} { [:MULTIPLY, text.to_sym] }
 	{DIVIDE} { [:DIVIDE, text.to_sym] }

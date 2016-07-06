@@ -93,8 +93,11 @@ class MyLangParser < Racc::Parser
       when (text = @ss.scan(/[a-zA-Z_]\w*/))
          action { [:VAR, text.to_sym] }
 
+      when (text = @ss.scan(/\d+\.\d+/))
+         action { [:FLOAT, Float(text)] }
+
       when (text = @ss.scan(/\d+/))
-         action { [:NUMBER, text.to_i] }
+         action { [:INTEGER, text.to_i] }
 
       when (text = @ss.scan(/\*\*/))
          action { [:POW, text.to_sym] }

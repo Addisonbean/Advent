@@ -5,7 +5,8 @@ module MyLangCore
 	def MyLangCore.type_of(val)
 		case val
 		# when Fixnum, Bignum, Float, BigDecimal then :Number
-		when Fixnum, Bignum, Float then :Number
+		when Float then :Float
+		when Fixnum, Bignum then :Integer
 		when String then :String
 		# when Array then :Block
 		when Block then :Block
@@ -40,14 +41,30 @@ module MyLangCore
 		!v
 	end
 
+	# improve this, probably w/ subclasses
 	OPERATORS = {
-		[:Number, :Number, :+] => -> (x, y) { x + y },
-		[:Number, :Number, :-] => -> (x, y) { x - y },
-		[:Number, :Number, :*] => -> (x, y) { x * y },
-		[:Number, :Number, :/] => -> (x, y) { x / y },
-		[:Number, :Number, :**] => -> (x, y) { x ** y },
+		[:Integer, :Integer, :+] => -> (x, y) { x + y },
+		[:Integer, :Integer, :-] => -> (x, y) { x - y },
+		[:Integer, :Integer, :*] => -> (x, y) { x * y },
+		[:Integer, :Integer, :/] => -> (x, y) { x / y },
+		[:Integer, :Integer, :**] => -> (x, y) { x ** y },
+		[:Float, :Float, :+] => -> (x, y) { x + y },
+		[:Float, :Float, :-] => -> (x, y) { x - y },
+		[:Float, :Float, :*] => -> (x, y) { x * y },
+		[:Float, :Float, :/] => -> (x, y) { x / y },
+		[:Float, :Float, :**] => -> (x, y) { x ** y },
+		[:Float, :Integer, :+] => -> (x, y) { x + y },
+		[:Float, :Integer, :-] => -> (x, y) { x - y },
+		[:Float, :Integer, :*] => -> (x, y) { x * y },
+		[:Float, :Integer, :/] => -> (x, y) { x / y },
+		[:Float, :Integer, :**] => -> (x, y) { x ** y },
+		[:Integer, :Float, :+] => -> (x, y) { x + y },
+		[:Integer, :Float, :-] => -> (x, y) { x - y },
+		[:Integer, :Float, :*] => -> (x, y) { x * y },
+		[:Integer, :Float, :/] => -> (x, y) { x / y },
+		[:Integer, :Float, :**] => -> (x, y) { x ** y },
 		[:String, :String, :+] => -> (x, y) { x + y },
-		[:String, :Number, :*] => -> (x, y) { x * y },
+		[:String, :Integer, :*] => -> (x, y) { x * y },
 		[:Any, :Any, :==] => -> (x, y) { x == y },
 		[:Any, :Any, :!=] => -> (x, y) { x != y},
 		[:Any, :Any, :<] => -> (x, y) { x < y },
@@ -56,7 +73,8 @@ module MyLangCore
 		[:Any, :Any, :>=] => -> (x, y) { x >= y },
 		# [:Any, :!] => -> (x) { !x },
 		[:Any, :!] => -> (x) { MyLangCore.not(x) },
-		[:Number, :-] => -> (x) { -x }
+		[:Integer, :-] => -> (x) { -x },
+		[:Float, :-] => -> (x) { -x }
 	}
 
 end
@@ -88,7 +106,7 @@ class MyLang
 	def parse(ary, scope = @global_scope)
 		val = case ary.shift
 		# [:TYPE, ruby_value]
-		when :NULL, :NUMBER, :BOOL, :STRING # TODO? make this line: `when :LITERAL`
+		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING # TODO? make this line: `when :LITERAL`
 			ary.shift
 		# [:BLOCK, Block]
 		when :BLOCK
@@ -176,33 +194,6 @@ class Scope
 
 	def make_child_scope
 		Scope.new(self)
-	end
-
-end
-
-# types: "Number", "String"
-class Value
-
-	attr_accessor :value, :type
-
-	def self.operators
-		@@operators
-	end
-	
-	def initialize(value, type)
-		@value = value
-		@type = type
-	end
-
-end
-
-class Variable
-
-	attr_accessor :value, :name
-
-	def initialize(name, value)
-		@name = name
-		@value = value
 	end
 
 end

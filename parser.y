@@ -19,7 +19,8 @@ rule
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
 	| if_statement
 
-	value : NUMBER { return [:NUMBER, val[0]] }
+	value : INTEGER { return [:INTEGER, val[0]] }
+	| FLOAT { return [:FLOAT, val[0]] }
 	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
 	| NULL { return [:NULL, nil] }
 	| bool { return [:BOOL, val[0]] }

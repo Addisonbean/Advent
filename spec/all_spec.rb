@@ -38,6 +38,19 @@ describe MyLang do
 		it "does simple parentheses" do
 			@lang.exec("(1)").must_equal 1
 		end
+		
+		it "has floats" do
+			@lang.exec("1.23").must_equal 1.23
+		end
+
+		it "does float math" do
+			@lang.exec("1 + 4.5").must_equal 5.5
+			@lang.exec("5.0 / 2").must_equal 2.5
+		end
+
+		it "does integer math" do
+			@lang.exec("5 / 2").must_equal 2
+		end
 
 		it "uses parentheses" do
 			@lang.exec("(10 + 12) * 3 + 2").must_equal 68
