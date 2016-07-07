@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative "../my_lang_core"
+require_relative "../lib/my_lang_core"
 require "minitest/autorun"
 
 # check for errors once they exist

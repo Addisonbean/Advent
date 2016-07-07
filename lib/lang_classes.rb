@@ -34,3 +34,6 @@ BLOCK = LangClass.new(:Block, ANY)
 NULL = LangClass.new(:Null, ANY)
 BOOLEAN = LangClass.new(:Boolean, ANY)
 
+# special value, not for use in MyLang, only in the source
+NONE = LangClass.new(:None)
+

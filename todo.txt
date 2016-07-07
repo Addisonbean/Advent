@@ -11,6 +11,7 @@ Add:
 	add the ternery operator
 	add more control flow
 	add enums
+	have non-binary operators use MyLangCore.find_op
 	add an import keyword
 		include a standard library
 	add errors for:
@@ -20,6 +21,4 @@ Add:
 	try this/see if it's necessary?: http://stackoverflow.com/a/10851447/1525759
 	add arrays and hashes
 	plan out/improve syntax
-	maybe fix the reduce/reduce conflict?
-	make a lib folder/separate the stuff in my_lang_core into other files
 

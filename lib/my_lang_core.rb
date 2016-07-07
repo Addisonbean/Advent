@@ -1,4 +1,4 @@
-require_relative "parser"
+require_relative "../parser"
 require_relative "lang_classes"
 
 module MyLangCore
@@ -54,7 +54,7 @@ module MyLangCore
 	end
 
 	# sorry :(
-	# todo: simplify for unary and ternery operators
+	# todo: simplify/use for unary and ternery operators
 	def MyLangCore.find_op(op, classes)
 		arity = classes.count
 		# matches: [ [[TYPE, TYPE], block], [[TYPE, TYPE], block], ... ]
@@ -211,12 +211,9 @@ class MyLang
 
 end
 
-class Special
-end
-
 class Scope
 
-	VAR_NOT_FOUND = Special.new
+	VAR_NOT_FOUND = NONE
 
 	attr_accessor :scope, :parent_scope, :real_scope
 

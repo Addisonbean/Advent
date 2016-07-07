@@ -7,11 +7,12 @@
 require 'racc/parser.rb'
 
 	require_relative "lexer"
-	require_relative "my_lang_core"
+	require_relative "lib/my_lang_core"
+	require_relative "lib/lang_classes"
 
 class MyLangParser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 88)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 89)
 	def parse(input)
 		scan_str(input)
 	end

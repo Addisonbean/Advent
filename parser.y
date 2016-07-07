@@ -82,8 +82,8 @@ end
 
 ---- header
 	require_relative "lexer"
-	require_relative "my_lang_core"
-	require_relative "lang_classes"
+	require_relative "lib/my_lang_core"
+	require_relative "lib/lang_classes"
 
 ---- inner
 	def parse(input)
