@@ -1,10 +1,10 @@
 require_relative "parser"
+require_relative "lang_classes"
 
 module MyLangCore
 
 	def MyLangCore.type_of(val)
 		case val
-		# when Fixnum, Bignum, Float, BigDecimal then :Number
 		when Float then :Float
 		when Fixnum, Bignum then :Integer
 		when String then :String
@@ -12,6 +12,19 @@ module MyLangCore
 		when Block then :Block
 		when NilClass then :Null
 		when TrueClass, FalseClass then :Bool
+		end
+	end
+
+
+	def MyLangCore.class_for_val(val)
+		case val
+		# when Fixnum, Bignum, Float, BigDecimal then :Number
+		when Float then FLOAT
+		when Fixnum, Bignum then INTEGER
+		when String then STRING
+		when Block then BLOCK
+		when NilClass then NULL
+		when TrueClass, FalseClass then BOOLEAN
 		end
 	end
 
@@ -32,7 +45,6 @@ module MyLangCore
 		op.call(val)
 	end
 
-	# fix?
 	def MyLangCore.str_escape(str)
 		str[1..-2]
 	end
@@ -41,37 +53,77 @@ module MyLangCore
 		!v
 	end
 
-	# improve this, probably w/ subclasses
+	# sorry :(
+	# todo: simplify for unary and ternery operators
+	def MyLangCore.find_op(op, classes)
+		arity = classes.count
+		# matches: [ [[TYPE, TYPE], block], [[TYPE, TYPE], block], ... ]
+		matches = OPERATORS[op].select { |o| o[0].count == arity }
+
+		# [ [0, [a, b]], [1, [a, b]], [2, [a, b]], ... ]
+		dists = matches.each_with_index.map do |o, idx|
+			ranking = o[0].each_with_index.map do |c, i|
+				classes[i].distance_from(c)
+			end
+			[idx, ranking]
+		end
+		dists.select! { |a| a[1].all? { |e| e >= 0 } }
+		idx_min_max = []
+		most_min = Float::INFINITY
+		min_max = Float::INFINITY
+		res = dists.map do |d|
+			most_min = [most_min, d[1].min].min
+			[d[0], [d[1].min, d[1].max]]
+		end.select do |d|
+			min_max = [min_max, d[1][1]].min
+			most_min == d[1][0]
+		end
+		res = res.select { |d| min_max == d[1][0] } if res.count > 1
+		if res.count < 1
+			# throw error
+		elsif res.count > 1
+			# throw error
+		end
+		matches[res[0][0]][1]
+	end
+
 	OPERATORS = {
-		[:Integer, :Integer, :+] => -> (x, y) { x + y },
-		[:Integer, :Integer, :-] => -> (x, y) { x - y },
-		[:Integer, :Integer, :*] => -> (x, y) { x * y },
-		[:Integer, :Integer, :/] => -> (x, y) { x / y },
-		[:Integer, :Integer, :**] => -> (x, y) { x ** y },
-		[:Float, :Float, :+] => -> (x, y) { x + y },
-		[:Float, :Float, :-] => -> (x, y) { x - y },
-		[:Float, :Float, :*] => -> (x, y) { x * y },
-		[:Float, :Float, :/] => -> (x, y) { x / y },
-		[:Float, :Float, :**] => -> (x, y) { x ** y },
-		[:Float, :Integer, :+] => -> (x, y) { x + y },
-		[:Float, :Integer, :-] => -> (x, y) { x - y },
-		[:Float, :Integer, :*] => -> (x, y) { x * y },
-		[:Float, :Integer, :/] => -> (x, y) { x / y },
-		[:Float, :Integer, :**] => -> (x, y) { x ** y },
-		[:Integer, :Float, :+] => -> (x, y) { x + y },
-		[:Integer, :Float, :-] => -> (x, y) { x - y },
-		[:Integer, :Float, :*] => -> (x, y) { x * y },
-		[:Integer, :Float, :/] => -> (x, y) { x / y },
-		[:Integer, :Float, :**] => -> (x, y) { x ** y },
-		[:String, :String, :+] => -> (x, y) { x + y },
-		[:String, :Integer, :*] => -> (x, y) { x * y },
-		[:Any, :Any, :==] => -> (x, y) { x == y },
-		[:Any, :Any, :!=] => -> (x, y) { x != y},
-		[:Any, :Any, :<] => -> (x, y) { x < y },
-		[:Any, :Any, :>] => -> (x, y) { x > y },
-		[:Any, :Any, :<=] => -> (x, y) { x <= y },
-		[:Any, :Any, :>=] => -> (x, y) { x >= y },
-		# [:Any, :!] => -> (x) { !x },
+		:+ => [
+			[[NUMBER, NUMBER], -> (x, y) { x + y } ],
+			[[STRING, STRING], -> (x, y) { x + y } ]
+		],
+		:- => [
+			[[NUMBER, NUMBER], -> (x, y) { x - y } ]
+		],
+		:* => [
+			[[NUMBER, NUMBER], -> (x, y) { x * y } ],
+			[[STRING, INTEGER], -> (x, y) { x * y } ]
+		],
+		:/ => [
+			[[NUMBER, NUMBER], -> (x, y) { x / y } ]
+		],
+		:** => [
+			[[NUMBER, NUMBER], -> (x, y) { x ** y } ]
+		],
+		:== => [
+			[[ANY, ANY], -> (x, y) { x == y } ]
+		],
+		:!= => [
+			[[ANY, ANY], -> (x, y) { x != y } ]
+		],
+		:< => [
+			[[ANY, ANY], -> (x, y) { x < y } ]
+		],
+		:> => [
+			[[ANY, ANY], -> (x, y) { x > y } ]
+		],
+		:<= => [
+			[[ANY, ANY], -> (x, y) { x <= y } ]
+		],
+		:>= => [
+			[[ANY, ANY], -> (x, y) { x >= y } ]
+		],
+		## [:Any, :!] => -> (x) { !x },
 		[:Any, :!] => -> (x) { MyLangCore.not(x) },
 		[:Integer, :-] => -> (x) { -x },
 		[:Float, :-] => -> (x) { -x }
@@ -121,7 +173,12 @@ class MyLang
 			scope[ary.shift] = parse(ary.shift, scope)
 		# [:BOPERATOR, Symbol, [value], [value]]
 		when :BOPERATOR
-			MyLangCore.binary_operator(ary.shift, parse(ary.shift, scope), parse(ary.shift, scope))
+			# MyLangCore.binary_operator(ary.shift, parse(ary.shift, scope), parse(ary.shift, scope))
+			op_sym = ary.shift
+			val1 = parse(ary.shift, scope)
+			val2 = parse(ary.shift, scope)
+			op = MyLangCore.find_op(op_sym, [MyLangCore.class_for_val(val1), MyLangCore.class_for_val(val2)])
+			op.call(val1, val2)
 		# [:UOPERATOR, [value]]
 		when :UOPERATOR
 			MyLangCore.unary_operator(ary.shift, parse(ary.shift, scope))
