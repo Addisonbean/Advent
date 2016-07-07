@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 require_relative "../lib/my_lang_core"
 require "minitest/autorun"
 

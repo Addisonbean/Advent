@@ -2,11 +2,14 @@ class LangClass
 
 	attr_accessor :name, :subclass, :superclasses
 
+	CLASS_LIST = {}
+
 	def initialize(name, subclass = nil)
 		@name = name
 		@subclass = subclass
 		@subclass.superclasses << self if @subclass
 		@superclasses = []
+		CLASS_LIST[name] = self
 	end
 
 	# def distance_from(other_class, originals = nil, dist = 0, reverse = false)

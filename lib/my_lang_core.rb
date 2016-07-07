@@ -137,6 +137,7 @@ class Block
 
 	def initialize(tree, params = [])
 		@tree = tree
+		# params: [[:Type, :name], ...]
 		@params = params
 		@scope = nil
 	end
@@ -144,6 +145,8 @@ class Block
 end
 
 class MyLang
+
+	attr_accessor :parser, :global_scope
 
 	def initialize
 		@parser = MyLangParser.new
@@ -178,7 +181,12 @@ class MyLang
 			val1 = parse(ary.shift, scope)
 			val2 = parse(ary.shift, scope)
 			op = MyLangCore.find_op(op_sym, [MyLangCore.class_for_val(val1), MyLangCore.class_for_val(val2)])
-			op.call(val1, val2)
+			op.is_a?(Block) ? call_block(op, scope, [val1, val2], false) : op.call(val1, val2)
+			# if op.is_a?(Block)
+			# 	call_block(op, scope, val1, val2)
+			# else
+			# 	op.call(val1, val2)
+			# end
 		# [:UOPERATOR, [value]]
 		when :UOPERATOR
 			MyLangCore.unary_operator(ary.shift, parse(ary.shift, scope))
@@ -197,14 +205,26 @@ class MyLang
 				els = ary.shift
 				els ? call_block(parse(els[1], scope), scope) : nil
 			end
+		# [:OP_DEF, Symbol, [block_value]]
+		when :OP_DEF
+			op = ary.shift
+			blk = parse(ary.shift, scope)
+			cs = blk.params.map do |p|
+				LangClass::CLASS_LIST[p[0]]
+			end
+			ops = MyLangCore::OPERATORS[op]
+			# check for similar operator? like [int, any] vs [any, int]?
+			ops.reject! { |the_op| the_op[0] == cs }
+			ops << [cs, blk]
+			# real_op = MyLangCore.find_op(op, cs)
 		end
 		ary.empty? ? val : parse(ary, scope)
 	end
 
-	def call_block(b, scope, args = [])
+	def call_block(b, scope, args = [], parse_args = true)
 		args.each_with_index do |arg, i|
-			param = b.params[i]
-			b.scope.real_scope[param] = parse(arg, scope)
+			param = b.params[i][1]
+			b.scope.real_scope[param] = parse_args ? parse(arg, scope) : arg
 		end
 		parse(b.tree, b.scope)
 	end

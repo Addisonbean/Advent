@@ -18,6 +18,7 @@ rule
 	| NEW_LINE expression { return val[1] }
 	| NEW_LINE
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
+	| OP ADD value { return [:OP_DEF, val[1], val[2]] }
 
 	value : INTEGER { return [:INTEGER, val[0]] }
 	| FLOAT { return [:FLOAT, val[0]] }
@@ -62,8 +63,11 @@ rule
 	opt_parameters :
 	| parameters
 
-	parameters : VAR { return [val[0]] }
-	| VAR COMMA parameters { return [val[0], *val[2]] }
+	parameters : parameter { return [val[0]] }
+	| parameter COMMA parameters { return [val[0], *val[2]] }
+
+	parameter : VAR { return [:Any, val[0]] }
+	| VAR CAST TYPE { return [val[2], val[0]] }
 
 	opt_arguments :
 	| arguments

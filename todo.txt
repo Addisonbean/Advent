@@ -5,13 +5,13 @@ Add:
 	add += and related operators
 		++ and --?
 	allow for cool floats w/ scientific notation and stuff
+	add comments
 	check if my order of operations and associativity are correct?
 	make a SoAndSoLiteralConverable method thing, like swift
 	fix `rake spec`
 	add the ternery operator
 	add more control flow
 	add enums
-	have non-binary operators use MyLangCore.find_op
 	add an import keyword
 		include a standard library
 	add errors for:
@@ -21,4 +21,11 @@ Add:
 	try this/see if it's necessary?: http://stackoverflow.com/a/10851447/1525759
 	add arrays and hashes
 	plan out/improve syntax
+	rename Boolean to Bool, and Integer to Int
+
+Soon:
+	add errors
+	have non-binary operators use MyLangCore.find_op
+		allow definition of non-binary operators 
+	recognize types as constants/vars so it'll recognize user defined types
 

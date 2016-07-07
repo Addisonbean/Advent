@@ -17,12 +17,12 @@ task :parser do
 end
 
 desc "Tests things"
-task :spec do
-	`./spec/all_spec.rb`
+task :tests do
+	puts `for f in spec/*_spec.rb; do ruby $f; done`
 end
 
 desc "Generate Lexer and Parser"
 task :generate => [:lexer, :parser]
 
 desc "Generate Lexer and Parser and Run Tests"
-task :test => [:generate, :spec]
+task :test => [:generate, :tests]

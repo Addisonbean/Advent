@@ -8,10 +8,14 @@ macro
 	TRUE true
 	FALSE false
 	IN in
+	OP op
 	NOT_OP !
 	EQ_OP (==|!=)
 	CMP_EQ_OP (<=|>=)
 	CMP_OP (<|>)
+	CAST :
+	# todo: this won't work for use defined types...
+	TYPE (Any|Number|Integer|Float|String|Block|Null|Boolean)
 	# all keywords should go above here
 	VAR [a-zA-Z_]\w*
 	FLOAT \d+\.\d+
@@ -44,6 +48,9 @@ rule
 	{CMP_EQ_OP} { [:CMP_EQ_OP, text.to_sym] }
 	{CMP_OP} { [:CMP_OP, text.to_sym] }
 	{NOT_OP} { [:NOT_OP, text.to_sym] }
+	{CAST} { [:CAST, text.to_sym] }
+	{OP} { [:OP, text.to_sym] }
+	{TYPE} { [:TYPE, text.to_sym] }
 	{VAR} { [:VAR, text.to_sym] }
 	{FLOAT} { [:FLOAT, Float(text)] }
 	{INTEGER} { [:INTEGER, text.to_i] }
