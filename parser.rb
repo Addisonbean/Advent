@@ -7,10 +7,10 @@
 require 'racc/parser.rb'
 
 	require_relative "lexer"
-	require_relative "lib/my_lang_core"
-	require_relative "lib/lang_classes"
+	require_relative "lib/advent_core"
+	require_relative "lib/advent_classes"
 
-class MyLangParser < Racc::Parser
+class AdventParser < Racc::Parser
 
 module_eval(<<'...end parser.y/module_eval...', 'parser.y', 93)
 	def parse(input)
@@ -397,7 +397,7 @@ module_eval(<<'.,.,', 'parser.y', 23)
 
 module_eval(<<'.,.,', 'parser.y', 24)
   def _reduce_9(val, _values, result)
-     return [:STRING, MyLangCore.str_escape(val[0])] 
+     return [:STRING, AdventCore.str_escape(val[0])] 
     result
   end
 .,.,
@@ -619,4 +619,4 @@ def _reduce_none(val, _values, result)
   val[0]
 end
 
-end   # class MyLangParser
+end   # class AdventParser

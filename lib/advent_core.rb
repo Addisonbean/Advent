@@ -1,9 +1,9 @@
 require_relative "../parser"
-require_relative "lang_classes"
-require_relative "errors"
+require_relative "advent_classes"
+require_relative "advent_errors"
 
-module MyLangCore
-	def MyLangCore.str_escape(str)
+module AdventCore
+	def AdventCore.str_escape(str)
 		str[1..-2]
 	end
 end
@@ -21,12 +21,12 @@ class Block
 
 end
 
-class MyLang
+class Advent
 
 	attr_accessor :parser, :global_scope
 
 	def initialize
-		@parser = MyLangParser.new
+		@parser = AdventParser.new
 		@global_scope = Scope.new
 		init_operators
 	end
@@ -55,7 +55,6 @@ class MyLang
 			scope[ary.shift] = parse(ary.shift, scope)
 		# [:BOPERATOR, Symbol, [value], [value]]
 		when :BOPERATOR
-			# MyLangCore.binary_operator(ary.shift, parse(ary.shift, scope), parse(ary.shift, scope))
 			op_sym = ary.shift
 			val1 = parse(ary.shift, scope)
 			val2 = parse(ary.shift, scope)
@@ -84,15 +83,14 @@ class MyLang
 			op = ary.shift
 			blk = parse(ary.shift, scope)
 			cs = blk.params.map do |p|
-				LangClass::CLASS_LIST[p[0]]
+				AdventClass::CLASS_LIST[p[0]]
 			end
 			ops = @operators[op]
 			# check for similar operator? like [int, any] vs [any, int]?
 			ops.reject! { |the_op| the_op[0] == cs }
 			ops << [cs, blk]
-			# real_op = MyLangCore.find_op(op, cs)
 		else 
-			LANG_PARSE_E.raise("Unrecognized token: #{token}.")
+			ADVENT_PARSE_E.raise("Unrecognized token: #{token}.")
 		end
 		ary.empty? ? val : parse(ary, scope)
 	end
@@ -205,9 +203,9 @@ class MyLang
 		end
 		res = res.select { |d| min_max == d[1][1] } if res.count > 1
 		if res.count < 1
-			LANG_ARGUMENT_E.raise("No operator named `#{op}' with type `(#{classes.map(&:name).join(", ")})' found.")
+			ADVENT_ARGUMENT_E.raise("No operator named `#{op}' with type `(#{classes.map(&:name).join(", ")})' found.")
 		elsif res.count > 1
-			LANG_OP_CONFLICT_E.raise("Unable to determine correct block for operator `#{op} (#{classes.map(&:name).join(", ")})'. Possible block types: #{
+			ADVENT_OP_CONFLICT_E.raise("Unable to determine correct block for operator `#{op} (#{classes.map(&:name).join(", ")})'. Possible block types: #{
 				res.map do |a| op
 					op_match = @operators[op][a[0]]
 					"`(#{op_match[0].map(&:name).join(", ")})'"
@@ -233,7 +231,7 @@ class Scope
 	def [](var)
 		val = get(var)
 		if val == Scope::VAR_NOT_FOUND
-			LANG_REFERENCE_E.raise("Undefined variable `#{var}'.")
+			ADVENT_REFERENCE_E.raise("Undefined variable `#{var}'.")
 		else
 			val
 		end

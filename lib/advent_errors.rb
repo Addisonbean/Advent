@@ -1,4 +1,4 @@
-class LangError
+class AdventError
 
 	@@options = {
 		error_output: $stderr
@@ -21,8 +21,8 @@ class LangError
 
 end
 
-LANG_ARGUMENT_E = LangError.new("Argument")
-LANG_OP_CONFLICT_E = LangError.new("Operator Conflict")
-LANG_PARSE_E = LangError.new("Parse")
-LANG_REFERENCE_E = LangError.new("Reference")
+ADVENT_ARGUMENT_E = AdventError.new("Argument")
+ADVENT_OP_CONFLICT_E = AdventError.new("Operator Conflict")
+ADVENT_PARSE_E = AdventError.new("Parse")
+ADVENT_REFERENCE_E = AdventError.new("Reference")
 

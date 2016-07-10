@@ -29,10 +29,9 @@ Add:
 
 Soon:
 	add parse/lex errors
-	rename the language and put on github
-	have non-binary operators use MyLangCore.find_op
+	have non-binary operators use AdventCore.find_op
 		allow definition of non-binary operators 
 	recognize types as constants/vars so it'll recognize user defined types
-		define/store classes in MyLang so they don't carry over to other instances of MyLang
+		define/store classes in Advent so they don't carry over to other instances of Advent
 	when using && and || don't check the second arg if it won't matter
 

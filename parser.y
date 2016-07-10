@@ -1,4 +1,4 @@
-class MyLangParser
+class AdventParser
 prechigh
 	left NEW_LINE
 	nonassoc LEFT_PARENTHESIS RIGHT_PARENTHESIS
@@ -22,7 +22,7 @@ rule
 
 	value : INTEGER { return [:INTEGER, val[0]] }
 	| FLOAT { return [:FLOAT, val[0]] }
-	| STRING { return [:STRING, MyLangCore.str_escape(val[0])] }
+	| STRING { return [:STRING, AdventCore.str_escape(val[0])] }
 	| NULL { return [:NULL, nil] }
 	| bool { return [:BOOL, val[0]] }
 	| assignment
@@ -86,8 +86,8 @@ end
 
 ---- header
 	require_relative "lexer"
-	require_relative "lib/my_lang_core"
-	require_relative "lib/lang_classes"
+	require_relative "lib/advent_core"
+	require_relative "lib/advent_classes"
 
 ---- inner
 	def parse(input)

@@ -1,13 +1,13 @@
-require_relative "../lib/my_lang_core"
-require_relative "../lib/errors"
+require_relative "../lib/advent_core"
+require_relative "../lib/advent_errors"
 require "minitest/autorun"
 
-describe MyLang do
+describe Advent do
 
 	before do
 		@err = ""
-		@lang = MyLang.new
-		LangError.options[:error_output] = @err
+		@lang = Advent.new
+		AdventError.options[:error_output] = @err
 	end
 
 	describe "reference errors" do

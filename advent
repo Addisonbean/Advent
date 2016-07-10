@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative "my_lang_core"
+require_relative "advent_core"
 
-lang = MyLang.new
+lang = Advent.new
 
 i = ARGF.read
 puts

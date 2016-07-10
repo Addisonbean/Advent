@@ -5,7 +5,7 @@
 #++
 
 require 'racc/parser'
-class MyLangParser < Racc::Parser
+class AdventParser < Racc::Parser
   require 'strscan'
 
   class ScanError < StandardError ; end

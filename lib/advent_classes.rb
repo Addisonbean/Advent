@@ -1,4 +1,4 @@
-class LangClass
+class AdventClass
 
 	attr_accessor :name, :subclass, :superclasses
 
@@ -28,15 +28,15 @@ class LangClass
 
 end
 
-ANY = LangClass.new(:Any)
-NUMBER = LangClass.new(:Number, ANY)
-INTEGER = LangClass.new(:Integer, NUMBER)
-FLOAT = LangClass.new(:Float, NUMBER)
-STRING = LangClass.new(:String, ANY)
-BLOCK = LangClass.new(:Block, ANY)
-NULL = LangClass.new(:Null, ANY)
-BOOLEAN = LangClass.new(:Boolean, ANY)
+ANY = AdventClass.new(:Any)
+NUMBER = AdventClass.new(:Number, ANY)
+INTEGER = AdventClass.new(:Integer, NUMBER)
+FLOAT = AdventClass.new(:Float, NUMBER)
+STRING = AdventClass.new(:String, ANY)
+BLOCK = AdventClass.new(:Block, ANY)
+NULL = AdventClass.new(:Null, ANY)
+BOOLEAN = AdventClass.new(:Boolean, ANY)
 
-# special value, not for use in MyLang, only in the source
-NONE = LangClass.new(:None)
+# special value, not for use in MyAdvent, only in the source
+NONE = AdventClass.new(:None)
 

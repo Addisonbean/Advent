@@ -1,11 +1,11 @@
-require_relative "../lib/my_lang_core"
+require_relative "../lib/advent_core"
 require "minitest/autorun"
 
 # check for errors once they exist
-describe MyLang do
+describe Advent do
 
 	before do
-		@lang = MyLang.new
+		@lang = Advent.new
 	end
 
 	describe "variables" do

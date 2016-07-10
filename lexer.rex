@@ -1,4 +1,4 @@
-class MyLangParser
+class AdventParser
 macro
 	BLANK [\ \t]+
 	# BLANK [\s]+

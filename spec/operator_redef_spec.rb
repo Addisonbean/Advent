@@ -1,11 +1,11 @@
-require_relative "../lib/my_lang_core"
+require_relative "../lib/advent_core"
 require "minitest/autorun"
 
-describe MyLang do
+describe Advent do
 
 	describe "operator redefinition" do
 		it "works" do
-			@lang = MyLang.new
+			@lang = Advent.new
 			@lang.exec(%(
 op + { x: Integer, y: Integer in 
 	x * y
@@ -16,7 +16,7 @@ op + { x: Integer, y: Integer in
 		end
 
 		it "doesn't mess with the operator for other types" do
-			@lang = MyLang.new
+			@lang = Advent.new
 			@lang.exec(%(
 op + { x: Integer, y: Integer in 
 	x * y
@@ -24,7 +24,7 @@ op + { x: Integer, y: Integer in
 
 "123" + "abc"
 			)).must_equal "123abc"
-			@lang = MyLang.new
+			@lang = Advent.new
 			@lang.exec(%(
 op + { x: Integer, y: Integer in 
 	x * y
