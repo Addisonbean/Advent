@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative "advent_core"
+require_relative "../lib/advent_core"
 
 lang = Advent.new
 
