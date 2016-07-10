@@ -9,7 +9,7 @@ Add:
 	check if my order of operations and associativity are correct?
 	make a SoAndSoLiteralConverable method thing, like swift
 	fix `rake spec`
-	add the ternery operator
+	add the ternary operator
 	add more control flow
 	add enums
 	add an import keyword
@@ -22,10 +22,17 @@ Add:
 	add arrays and hashes
 	plan out/improve syntax
 	rename Boolean to Bool, and Integer to Int
+	make a vim plugin for the language
+	extensively check for possible errors/crashes
+	add a Gemfile so you can do "bundle install" and crap
+	add puncuation to errors in the call to raise or the definition of raise?
 
 Soon:
-	add errors
+	add parse/lex errors
+	rename the language and put on github
 	have non-binary operators use MyLangCore.find_op
 		allow definition of non-binary operators 
 	recognize types as constants/vars so it'll recognize user defined types
+		define/store classes in MyLang so they don't carry over to other instances of MyLang
+	when using && and || don't check the second arg if it won't matter
 

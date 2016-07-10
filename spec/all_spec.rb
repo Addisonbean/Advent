@@ -206,7 +206,7 @@ if 5 {
 	4
 }
 			)).must_equal 4
-			@lang.exec(%( if NULL { 7 } )).must_equal nil
+			@lang.exec(%( if null { 7 } )).must_equal nil
 		end
 
 		it "executes the 'else' block if the condition is fasly" do

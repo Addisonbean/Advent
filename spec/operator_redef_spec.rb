@@ -24,6 +24,14 @@ op + { x: Integer, y: Integer in
 
 "123" + "abc"
 			)).must_equal "123abc"
+			@lang = MyLang.new
+			@lang.exec(%(
+op + { x: Integer, y: Integer in 
+	x * y
+}
+
+1.0 + 3.0
+			)).must_equal 4.0
 		end
 	end
 

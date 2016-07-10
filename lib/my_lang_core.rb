@@ -1,134 +1,11 @@
 require_relative "../parser"
 require_relative "lang_classes"
+require_relative "errors"
 
 module MyLangCore
-
-	def MyLangCore.type_of(val)
-		case val
-		when Float then :Float
-		when Fixnum, Bignum then :Integer
-		when String then :String
-		# when Array then :Block
-		when Block then :Block
-		when NilClass then :Null
-		when TrueClass, FalseClass then :Bool
-		end
-	end
-
-
-	def MyLangCore.class_for_val(val)
-		case val
-		# when Fixnum, Bignum, Float, BigDecimal then :Number
-		when Float then FLOAT
-		when Fixnum, Bignum then INTEGER
-		when String then STRING
-		when Block then BLOCK
-		when NilClass then NULL
-		when TrueClass, FalseClass then BOOLEAN
-		end
-	end
-
-	# make a general .operator method using map and the splat operator
-	def MyLangCore.binary_operator(operator, val1, val2)
-		# TODO: add errors
-		# TODO: put `operators` somewhere else, trash `Value`
-		op = OPERATORS[[MyLangCore.type_of(val1), MyLangCore.type_of(val2), operator]]
-		op = OPERATORS[[:Any, MyLangCore.type_of(val2), operator]] unless op
-		op = OPERATORS[[MyLangCore.type_of(val1), :Any, operator]] unless op
-		op = OPERATORS[[:Any, :Any, operator]] unless op
-		op.call(val1, val2)
-	end
-
-	def MyLangCore.unary_operator(operator, val)
-		op = OPERATORS[[MyLangCore.type_of(val), operator]]
-		op = OPERATORS[[:Any, operator]] unless op
-		op.call(val)
-	end
-
 	def MyLangCore.str_escape(str)
 		str[1..-2]
 	end
-
-	def MyLangCore.not(v)
-		!v
-	end
-
-	# sorry :(
-	# todo: simplify/use for unary and ternery operators
-	def MyLangCore.find_op(op, classes)
-		arity = classes.count
-		# matches: [ [[TYPE, TYPE], block], [[TYPE, TYPE], block], ... ]
-		matches = OPERATORS[op].select { |o| o[0].count == arity }
-
-		# [ [0, [a, b]], [1, [a, b]], [2, [a, b]], ... ]
-		dists = matches.each_with_index.map do |o, idx|
-			ranking = o[0].each_with_index.map do |c, i|
-				classes[i].distance_from(c)
-			end
-			[idx, ranking]
-		end
-		dists.select! { |a| a[1].all? { |e| e >= 0 } }
-		idx_min_max = []
-		most_min = Float::INFINITY
-		min_max = Float::INFINITY
-		res = dists.map do |d|
-			most_min = [most_min, d[1].min].min
-			[d[0], [d[1].min, d[1].max]]
-		end.select do |d|
-			min_max = [min_max, d[1][1]].min
-			most_min == d[1][0]
-		end
-		res = res.select { |d| min_max == d[1][0] } if res.count > 1
-		if res.count < 1
-			# throw error
-		elsif res.count > 1
-			# throw error
-		end
-		matches[res[0][0]][1]
-	end
-
-	OPERATORS = {
-		:+ => [
-			[[NUMBER, NUMBER], -> (x, y) { x + y } ],
-			[[STRING, STRING], -> (x, y) { x + y } ]
-		],
-		:- => [
-			[[NUMBER, NUMBER], -> (x, y) { x - y } ]
-		],
-		:* => [
-			[[NUMBER, NUMBER], -> (x, y) { x * y } ],
-			[[STRING, INTEGER], -> (x, y) { x * y } ]
-		],
-		:/ => [
-			[[NUMBER, NUMBER], -> (x, y) { x / y } ]
-		],
-		:** => [
-			[[NUMBER, NUMBER], -> (x, y) { x ** y } ]
-		],
-		:== => [
-			[[ANY, ANY], -> (x, y) { x == y } ]
-		],
-		:!= => [
-			[[ANY, ANY], -> (x, y) { x != y } ]
-		],
-		:< => [
-			[[ANY, ANY], -> (x, y) { x < y } ]
-		],
-		:> => [
-			[[ANY, ANY], -> (x, y) { x > y } ]
-		],
-		:<= => [
-			[[ANY, ANY], -> (x, y) { x <= y } ]
-		],
-		:>= => [
-			[[ANY, ANY], -> (x, y) { x >= y } ]
-		],
-		## [:Any, :!] => -> (x) { !x },
-		[:Any, :!] => -> (x) { MyLangCore.not(x) },
-		[:Integer, :-] => -> (x) { -x },
-		[:Float, :-] => -> (x) { -x }
-	}
-
 end
 
 class Block
@@ -151,6 +28,7 @@ class MyLang
 	def initialize
 		@parser = MyLangParser.new
 		@global_scope = Scope.new
+		init_operators
 	end
 
 	def exec(code)
@@ -159,7 +37,8 @@ class MyLang
 
 	# NEVER call `parse` without supplying `scope` except in `exec`
 	def parse(ary, scope = @global_scope)
-		val = case ary.shift
+		token = ary.shift
+		val = case token
 		# [:TYPE, ruby_value]
 		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING # TODO? make this line: `when :LITERAL`
 			ary.shift
@@ -180,16 +59,11 @@ class MyLang
 			op_sym = ary.shift
 			val1 = parse(ary.shift, scope)
 			val2 = parse(ary.shift, scope)
-			op = MyLangCore.find_op(op_sym, [MyLangCore.class_for_val(val1), MyLangCore.class_for_val(val2)])
+			op = find_op(op_sym, [class_for_val(val1), class_for_val(val2)])
 			op.is_a?(Block) ? call_block(op, scope, [val1, val2], false) : op.call(val1, val2)
-			# if op.is_a?(Block)
-			# 	call_block(op, scope, val1, val2)
-			# else
-			# 	op.call(val1, val2)
-			# end
 		# [:UOPERATOR, [value]]
 		when :UOPERATOR
-			MyLangCore.unary_operator(ary.shift, parse(ary.shift, scope))
+			unary_operator(ary.shift, parse(ary.shift, scope))
 		# [:CALL, [block_value], [:ARGS, [arg1_value], [arg2_value], ...]]
 		when :CALL
 			call_block(parse(ary.shift, scope), scope, ary.shift[1..-1])
@@ -212,11 +86,13 @@ class MyLang
 			cs = blk.params.map do |p|
 				LangClass::CLASS_LIST[p[0]]
 			end
-			ops = MyLangCore::OPERATORS[op]
+			ops = @operators[op]
 			# check for similar operator? like [int, any] vs [any, int]?
 			ops.reject! { |the_op| the_op[0] == cs }
 			ops << [cs, blk]
 			# real_op = MyLangCore.find_op(op, cs)
+		else 
+			LANG_PARSE_E.raise("Unrecognized token: #{token}.")
 		end
 		ary.empty? ? val : parse(ary, scope)
 	end
@@ -227,6 +103,118 @@ class MyLang
 			b.scope.real_scope[param] = parse_args ? parse(arg, scope) : arg
 		end
 		parse(b.tree, b.scope)
+	end
+
+	def init_operators
+		@operators = {
+			:+ => [
+				[[NUMBER, NUMBER], -> (x, y) { x + y } ],
+				[[STRING, STRING], -> (x, y) { x + y } ]
+			],
+			:- => [
+				[[NUMBER, NUMBER], -> (x, y) { x - y } ]
+			],
+			:* => [
+				[[NUMBER, NUMBER], -> (x, y) { x * y } ],
+				[[STRING, INTEGER], -> (x, y) { x * y } ]
+			],
+			:/ => [
+				[[NUMBER, NUMBER], -> (x, y) { x / y } ]
+			],
+			:** => [
+				[[NUMBER, NUMBER], -> (x, y) { x ** y } ]
+			],
+			:== => [
+				[[ANY, ANY], -> (x, y) { x == y } ]
+			],
+			:!= => [
+				[[ANY, ANY], -> (x, y) { x != y } ]
+			],
+			:< => [
+				[[ANY, ANY], -> (x, y) { x < y } ]
+			],
+			:> => [
+				[[ANY, ANY], -> (x, y) { x > y } ]
+			],
+			:<= => [
+				[[ANY, ANY], -> (x, y) { x <= y } ]
+			],
+			:>= => [
+				[[ANY, ANY], -> (x, y) { x >= y } ]
+			],
+			[:Any, :!] => -> (x) { !x },
+			# [:Any, :!] => -> (x) { not(x) },
+			[:Integer, :-] => -> (x) { -x },
+			[:Float, :-] => -> (x) { -x }
+		}
+	end
+
+	def type_of(val)
+		case val
+		when Float then :Float
+		when Fixnum, Bignum then :Integer
+		when String then :String
+		when Block then :Block
+		when NilClass then :Null
+		when TrueClass, FalseClass then :Bool
+		end
+	end
+
+	def class_for_val(val)
+		case val
+		when Float then FLOAT
+		when Fixnum, Bignum then INTEGER
+		when String then STRING
+		when Block then BLOCK
+		when NilClass then NULL
+		when TrueClass, FalseClass then BOOLEAN
+		end
+	end
+
+	def unary_operator(operator, val)
+		op = @operators[[type_of(val), operator]]
+		op = @operators[[:Any, operator]] unless op
+		op.call(val)
+	end
+
+	# sorry :(
+	# todo: simplify/use for unary and ternery operators
+	def find_op(op, classes)
+		arity = classes.count
+		# matches: [ [[TYPE, TYPE], block], [[TYPE, TYPE], block], ... ]
+		matches = @operators[op].select { |o| o[0].count == arity }
+
+		# [ [0, [a, b]], [1, [a, b]], [2, [a, b]], ... ]
+		dists = matches.each_with_index.map do |o, idx|
+			ranking = o[0].each_with_index.map do |c, i|
+				classes[i].distance_from(c)
+			end
+			[idx, ranking]
+		end
+		dists.select! { |a| a[1].all? { |e| e >= 0 } }
+		idx_min_max = []
+		most_min = Float::INFINITY
+		min_max = Float::INFINITY
+		# [ [0, [min, max]], [1, [min, max]], ...]
+		res = dists.map do |d|
+			most_min = [most_min, d[1].min].min
+			[d[0], [d[1].min, d[1].max]]
+		end.select do |d|
+			min_max = [min_max, d[1][1]].min
+			most_min == d[1][0]
+		end
+		res = res.select { |d| min_max == d[1][1] } if res.count > 1
+		if res.count < 1
+			LANG_ARGUMENT_E.raise("No operator named `#{op}' with type `(#{classes.map(&:name).join(", ")})' found.")
+		elsif res.count > 1
+			LANG_OP_CONFLICT_E.raise("Unable to determine correct block for operator `#{op} (#{classes.map(&:name).join(", ")})'. Possible block types: #{
+				res.map do |a| op
+					op_match = @operators[op][a[0]]
+					"`(#{op_match[0].map(&:name).join(", ")})'"
+				end.join(", ")
+			}.")
+		end
+		matches[res[0][0]][1]
 	end
 
 end
@@ -243,12 +231,18 @@ class Scope
 	end
 	
 	def [](var)
-		val = @real_scope[var]
-		if val == Scope::VAR_NOT_FOUND && @parent_scope
-			val = @parent_scope[var]
+		val = get(var)
+		if val == Scope::VAR_NOT_FOUND
+			LANG_REFERENCE_E.raise("Undefined variable `#{var}'.")
+		else
+			val
 		end
-		# todo: throw error instead of returning nil
-		val == Scope::VAR_NOT_FOUND ? nil : val
+	end
+	
+	def get(var)
+		val = @real_scope[var]
+		val = @parent_scope.get(var) if val == Scope::VAR_NOT_FOUND && @parent_scope
+		val
 	end
 
 	def []=(var, val)
