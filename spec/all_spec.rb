@@ -140,6 +140,10 @@ describe Advent do
 			@lang.exec("a = 2; { a in a = 4 }(5); a").must_equal 2
 			@lang.exec("a = 2; { a in a }(5); a").must_equal 2
 		end
+
+		it "does empty blocks" do
+			@lang.exec("a = {}") # won't raise an error
+		end
 	end
 
 	describe "booleans" do

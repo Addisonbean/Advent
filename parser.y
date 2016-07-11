@@ -20,6 +20,9 @@ rule
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
 	| OP ADD value { return [:OP_DEF, val[1], val[2]] }
 
+	opt_expression :
+	| expression
+
 	value : INTEGER { return [:INTEGER, val[0]] }
 	| FLOAT { return [:FLOAT, val[0]] }
 	| STRING { return [:STRING, AdventCore.str_escape(val[0])] }
@@ -51,8 +54,8 @@ rule
 
 	assignment : VAR EQUALS value { return [:ASSIGN, val[0], val[2]] }
 
-	block : CURLY_BRACKET_L expression CURLY_BRACKET_R { return [:BLOCK, Block.new(val[1])] }
-	| CURLY_BRACKET_L parameters IN expression CURLY_BRACKET_R { return [:BLOCK, Block.new(val[3], val[1])] }
+	block : CURLY_BRACKET_L opt_expression CURLY_BRACKET_R { return [:BLOCK, Block.new(val[1])] }
+	| CURLY_BRACKET_L parameters IN opt_expression CURLY_BRACKET_R { return [:BLOCK, Block.new(val[3], val[1])] }
 
 	call_block : value LEFT_PARENTHESIS arguments RIGHT_PARENTHESIS { return [:CALL, val[0], [:ARGS, *val[2]]] }
 	| value LEFT_PARENTHESIS RIGHT_PARENTHESIS { return [:CALL, val[0], [:ARGS]] }

@@ -30,7 +30,6 @@ Add:
 	write tests for bin/advent
 
 Soon:
-	empty blocks don't exist right now...
 	add methods
 	print the return values as they would be represented in Advent, not Ruby (half complete, requires classes)
 	the todolist in bin/advent
