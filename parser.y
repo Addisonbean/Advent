@@ -14,9 +14,9 @@ preclow
 
 rule
 	expression : value 
+	| NEW_LINE
 	| expression NEW_LINE { return val[0] }
 	| NEW_LINE expression { return val[1] }
-	| NEW_LINE
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
 	| OP ADD value { return [:OP_DEF, val[1], val[2]] }
 

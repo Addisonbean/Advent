@@ -1,10 +1,47 @@
 #!/usr/bin/env ruby
 
 require_relative "../lib/advent_core"
+require "readline"
 
+# TODO:
+# 	add history for readline (use zsd's history stuff)
+# 	handle Ctrl-C, and other signal crap
+# 	add an exit function to the language
+# 	try "1 + \n 3" and it kinda messes up
+
+AdventError.options[:exit_on_error] = false
 lang = Advent.new
 
-i = ARGF.read
-puts
-p lang.exec(i)
+def prompt(promptly = "advt> ")
+	input = Readline.readline(promptly, true)
+	Readline::HISTORY.pop if input =~ /^\s*$/ || input == Readline::HISTORY.to_a[-2]
+	if input
+		input
+	else
+		puts
+		exit
+	end
+end
+
+def exec(lang, line)
+	begin
+		val = lang.exec(line)
+		puts "=> #{AdventCore.display_advent_val(val)}"
+	rescue Racc::ParseError => e
+		*_, tok, name = e.to_s.split(" ")
+		if %w[nil "$"].include?(tok)
+			exec(lang, line + "\n" + prompt("... > ")) unless line =~ /^\s*$/
+		else
+			ADVENT_PARSE_E.raise("Unexpected token: `#{tok[2..-2]}'.")
+		end
+	rescue AdventParser::ScanError => e
+		tok = e.to_s.split(" ")[-1][1..-2]
+		ADVENT_PARSE_E.raise("Unexpected token: `#{tok}'.")
+	rescue SystemExit
+	end
+end
+
+loop do
+	exec(lang, prompt)
+end
 

@@ -1,7 +1,10 @@
+require_relative "advent_errors"
+
 class AdventError
 
 	@@options = {
-		error_output: $stderr
+		error_output: $stderr,
+		exit_on_error: true
 	}
 
 	def self.options
@@ -16,7 +19,8 @@ class AdventError
 	def raise(message, exit_status = nil)
 		exit_status ||= @default_exit_status
 		@@options[:error_output] << "#@type Error: #{message}\n"
-		exit exit_status
+		exit exit_status if @@options[:exit_on_error]
+		return EXIT
 	end
 
 end

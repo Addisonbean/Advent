@@ -26,9 +26,15 @@ Add:
 	extensively check for possible errors/crashes
 	add a Gemfile so you can do "bundle install" and crap
 	add puncuation to errors in the call to raise or the definition of raise?
+	don't assign the special `_` variable
+	write tests for bin/advent
 
 Soon:
-	add parse/lex errors
+	empty blocks don't exist right now...
+	add methods
+	print the return values as they would be represented in Advent, not Ruby (half complete, requires classes)
+	the todolist in bin/advent
+
 	have non-binary operators use AdventCore.find_op
 		allow definition of non-binary operators 
 	recognize types as constants/vars so it'll recognize user defined types

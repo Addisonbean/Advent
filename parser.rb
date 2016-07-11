@@ -150,10 +150,10 @@ racc_action_pointer = [
    nil,   nil,     0,   nil,    82,   nil,   nil ]
 
 racc_action_default = [
-   -49,   -49,    -1,    -4,   -49,    -7,    -8,    -9,   -10,   -11,
+   -49,   -49,    -1,    -2,   -49,    -7,    -8,    -9,   -10,   -11,
    -12,   -13,   -14,   -49,   -16,   -17,   -18,   -19,   -49,   -49,
-   -30,   -31,   -49,   -49,   -49,    -2,   -49,   -49,   -49,   -49,
-   -49,   -49,   -49,   -49,   -49,    -3,   -49,   -49,   -49,   -49,
+   -30,   -31,   -49,   -49,   -49,    -3,   -49,   -49,   -49,   -49,
+   -49,   -49,   -49,   -49,   -49,    -4,   -49,   -49,   -49,   -49,
    -28,   -29,   -49,   -16,   -49,   -41,   -49,    77,    -5,   -20,
    -21,   -22,   -23,   -24,   -25,   -26,   -27,   -47,   -49,   -36,
     -6,   -15,   -32,   -38,   -33,   -49,   -49,   -49,   -37,   -49,
@@ -188,9 +188,9 @@ racc_goto_default = [
 racc_reduce_table = [
   0, 0, :racc_error,
   1, 33, :_reduce_none,
-  2, 33, :_reduce_2,
-  2, 33, :_reduce_3,
   1, 33, :_reduce_none,
+  2, 33, :_reduce_3,
+  2, 33, :_reduce_4,
   3, 33, :_reduce_5,
   3, 33, :_reduce_6,
   1, 34, :_reduce_7,
@@ -351,21 +351,21 @@ Racc_debug_parser = false
 
 # reduce 1 omitted
 
-module_eval(<<'.,.,', 'parser.y', 16)
-  def _reduce_2(val, _values, result)
+# reduce 2 omitted
+
+module_eval(<<'.,.,', 'parser.y', 17)
+  def _reduce_3(val, _values, result)
      return val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 17)
-  def _reduce_3(val, _values, result)
+module_eval(<<'.,.,', 'parser.y', 18)
+  def _reduce_4(val, _values, result)
      return val[1] 
     result
   end
 .,.,
-
-# reduce 4 omitted
 
 module_eval(<<'.,.,', 'parser.y', 19)
   def _reduce_5(val, _values, result)

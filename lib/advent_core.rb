@@ -6,6 +6,11 @@ module AdventCore
 	def AdventCore.str_escape(str)
 		str[1..-2]
 	end
+
+	def AdventCore.display_advent_val(val)
+		# TODO: change this
+		val.nil? ? "null" : val.inspect
+	end
 end
 
 class Block
@@ -31,11 +36,13 @@ class Advent
 		init_operators
 	end
 
+	# DANGEROUS
 	def exec(code)
 		parse(@parser.parse(code))
 	end
 
 	# NEVER call `parse` without supplying `scope` except in `exec`
+	# DANGEROUS
 	def parse(ary, scope = @global_scope)
 		token = ary.shift
 		val = case token
@@ -52,36 +59,72 @@ class Advent
 			scope[ary.shift]
 		# [:ASSIGN, Symbol, [value]]
 		when :ASSIGN
-			scope[ary.shift] = parse(ary.shift, scope)
+			sym = ary.shift
+			v = parse(ary.shift, scope)
+			return EXIT if v == EXIT
+			scope[sym] = v
 		# [:BOPERATOR, Symbol, [value], [value]]
 		when :BOPERATOR
 			op_sym = ary.shift
 			val1 = parse(ary.shift, scope)
+			return EXIT if val1 == EXIT
+
 			val2 = parse(ary.shift, scope)
+			return EXIT if val2 == EXIT
+
 			op = find_op(op_sym, [class_for_val(val1), class_for_val(val2)])
-			op.is_a?(Block) ? call_block(op, scope, [val1, val2], false) : op.call(val1, val2)
+			return EXIT if op == EXIT
+
+			if op.is_a?(Block)
+				v = call_block(op, scope, [val1, val2], false)
+				return EXIT if v == EXIT
+				v
+			else
+				op.call(val1, val2)
+			end
 		# [:UOPERATOR, [value]]
 		when :UOPERATOR
 			unary_operator(ary.shift, parse(ary.shift, scope))
 		# [:CALL, [block_value], [:ARGS, [arg1_value], [arg2_value], ...]]
 		when :CALL
-			call_block(parse(ary.shift, scope), scope, ary.shift[1..-1])
+			blk = parse(ary.shift, scope)
+			return EXIT if blk == EXIT
+			v = call_block(blk, scope, ary.shift[1..-1])
+			return EXIT if v == EXIT
+			v
 		# [:IF, [cond_value], [block_value]] ||
 		# [:IF, [cond_value], [block_value], [:ELSE, [block_value]]]
 		when :IF
-			if parse(ary.shift, scope)
-				res = call_block(parse(ary.shift, scope), scope)
+			cond = parse(ary.shift, scope)
+			return EXIT if cond == EXIT
+			if cond
+				blk = parse(ary.shift, scope)
+				return EXIT if blk == EXIT
+
+				res = call_block(blk, scope)
+				return EXIT if res == EXIT
+
 				ary.shift while ary[0] && ary[0][0] == :ELSE
 				res
 			else
 				ary.shift
 				els = ary.shift
-				els ? call_block(parse(els[1], scope), scope) : nil
+				if els
+					blk = parse(els[1], scope)
+					return EXIT if blk == EXIT
+
+					v = call_block(blk, scope)
+					return EXIT if v == EXIT
+					v
+				else
+					nil
+				end
 			end
 		# [:OP_DEF, Symbol, [block_value]]
 		when :OP_DEF
 			op = ary.shift
 			blk = parse(ary.shift, scope)
+			return EXIT if blk == EXIT
 			cs = blk.params.map do |p|
 				AdventClass::CLASS_LIST[p[0]]
 			end
@@ -90,15 +133,22 @@ class Advent
 			ops.reject! { |the_op| the_op[0] == cs }
 			ops << [cs, blk]
 		else 
-			ADVENT_PARSE_E.raise("Unrecognized token: #{token}.")
+			return ADVENT_PARSE_E.raise("Unrecognized token: #{token}.")
 		end
 		ary.empty? ? val : parse(ary, scope)
 	end
 
+	# DANGEROUS
 	def call_block(b, scope, args = [], parse_args = true)
 		args.each_with_index do |arg, i|
 			param = b.params[i][1]
-			b.scope.real_scope[param] = parse_args ? parse(arg, scope) : arg
+			b.scope.real_scope[param] = if parse_args
+				v = parse(arg, scope)
+				return EXIT if v == EXIT
+				v
+			else
+				arg
+			end
 		end
 		parse(b.tree, b.scope)
 	end
@@ -177,6 +227,7 @@ class Advent
 
 	# sorry :(
 	# todo: simplify/use for unary and ternery operators
+	# DANGEROUS
 	def find_op(op, classes)
 		arity = classes.count
 		# matches: [ [[TYPE, TYPE], block], [[TYPE, TYPE], block], ... ]
@@ -203,9 +254,9 @@ class Advent
 		end
 		res = res.select { |d| min_max == d[1][1] } if res.count > 1
 		if res.count < 1
-			ADVENT_ARGUMENT_E.raise("No operator named `#{op}' with type `(#{classes.map(&:name).join(", ")})' found.")
+			return ADVENT_ARGUMENT_E.raise("No operator named `#{op}' with type `(#{classes.map(&:name).join(", ")})' found.")
 		elsif res.count > 1
-			ADVENT_OP_CONFLICT_E.raise("Unable to determine correct block for operator `#{op} (#{classes.map(&:name).join(", ")})'. Possible block types: #{
+			return ADVENT_OP_CONFLICT_E.raise("Unable to determine correct block for operator `#{op} (#{classes.map(&:name).join(", ")})'. Possible block types: #{
 				res.map do |a| op
 					op_match = @operators[op][a[0]]
 					"`(#{op_match[0].map(&:name).join(", ")})'"
@@ -231,7 +282,7 @@ class Scope
 	def [](var)
 		val = get(var)
 		if val == Scope::VAR_NOT_FOUND
-			ADVENT_REFERENCE_E.raise("Undefined variable `#{var}'.")
+			return ADVENT_REFERENCE_E.raise("Undefined variable `#{var}'.")
 		else
 			val
 		end
