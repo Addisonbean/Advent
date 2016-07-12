@@ -3,13 +3,35 @@ require_relative "advent_classes"
 require_relative "advent_errors"
 
 module AdventCore
-	def AdventCore.str_escape(str)
+	def self.str_escape(str)
 		str[1..-2]
 	end
 
-	def AdventCore.display_advent_val(val)
+	def self.display_advent_val(val)
 		# TODO: change this
 		val.nil? ? "null" : val.inspect
+	end
+
+	def self.type_of(val)
+		case val
+		when Float then :Float
+		when Fixnum, Bignum then :Integer
+		when String then :String
+		when Block then :Block
+		when NilClass then :Null
+		when TrueClass, FalseClass then :Bool
+		end
+	end
+
+	def self.class_for_val(val)
+		case val
+		when Float then FLOAT
+		when Fixnum, Bignum then INTEGER
+		when String then STRING
+		when Block then BLOCK
+		when NilClass then NULL
+		when TrueClass, FalseClass then BOOLEAN
+		end
 	end
 end
 
@@ -47,7 +69,7 @@ class Advent
 		token = ary.shift
 		val = case token
 		# [:TYPE, ruby_value]
-		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING # TODO? make this line: `when :LITERAL`
+		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING # TODO? make this line: `when :LITERAL`? Probably not, idk
 			ary.shift
 		# [:BLOCK, Block]
 		when :BLOCK
@@ -72,7 +94,7 @@ class Advent
 			val2 = parse(ary.shift, scope)
 			return EXIT if val2 == EXIT
 
-			op = find_op(op_sym, [class_for_val(val1), class_for_val(val2)])
+			op = find_op(op_sym, [AdventCore.class_for_val(val1), AdventCore.class_for_val(val2)])
 			return EXIT if op == EXIT
 
 			if op.is_a?(Block)
@@ -132,6 +154,13 @@ class Advent
 			# check for similar operator? like [int, any] vs [any, int]?
 			ops.reject! { |the_op| the_op[0] == cs }
 			ops << [cs, blk]
+		# [:ATTR, [value], Symbol]
+		# when :ATTR
+		# 	val = parse(ary.shift, scope)
+		# 	return EXIT if val == EXIT
+		# 	klass = AdventCore.class_for_val(val)
+		# 	res = klass.attr
+
 		else 
 			return ADVENT_PARSE_E.raise("Unrecognized token: #{token}.")
 		end
@@ -197,30 +226,8 @@ class Advent
 		}
 	end
 
-	def type_of(val)
-		case val
-		when Float then :Float
-		when Fixnum, Bignum then :Integer
-		when String then :String
-		when Block then :Block
-		when NilClass then :Null
-		when TrueClass, FalseClass then :Bool
-		end
-	end
-
-	def class_for_val(val)
-		case val
-		when Float then FLOAT
-		when Fixnum, Bignum then INTEGER
-		when String then STRING
-		when Block then BLOCK
-		when NilClass then NULL
-		when TrueClass, FalseClass then BOOLEAN
-		end
-	end
-
 	def unary_operator(operator, val)
-		op = @operators[[type_of(val), operator]]
+		op = @operators[[AdventCore.type_of(val), operator]]
 		op = @operators[[:Any, operator]] unless op
 		op.call(val)
 	end

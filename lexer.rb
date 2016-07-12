@@ -93,6 +93,9 @@ class AdventParser < Racc::Parser
       when (text = @ss.scan(/:/))
          action { [:CAST, text.to_sym] }
 
+      when (text = @ss.scan(/\./))
+         action { [:DOT, text.to_sym] }
+
       when (text = @ss.scan(/op/))
          action { [:OP, text.to_sym] }
 

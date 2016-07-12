@@ -1,7 +1,7 @@
 class AdventParser
 prechigh
 	left NEW_LINE
-	nonassoc LEFT_PARENTHESIS RIGHT_PARENTHESIS
+	nonassoc LEFT_PARENTHESIS RIGHT_PARENTHESIS DOT
 	nonassoc NOT_OP
 	right POW
 	nonassoc UMINUS
@@ -18,7 +18,7 @@ rule
 	| expression NEW_LINE { return val[0] }
 	| NEW_LINE expression { return val[1] }
 	| expression NEW_LINE expression { return [*val[0], *val[2]] }
-	| OP ADD value { return [:OP_DEF, val[1], val[2]] }
+	| OP ADD value { return [:OP_DEF, val[1], val[2]] } # make this a value?
 
 	opt_expression :
 	| expression
@@ -36,6 +36,7 @@ rule
 	| block
 	| call_block
 	| if_statement
+	| attribute
 
 	boperator : value POW value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
@@ -51,6 +52,8 @@ rule
 
 	bool : TRUE
 	| FALSE
+
+	attribute : value DOT VAR { return [:ATTR, val[0], val[2]] }
 
 	assignment : VAR EQUALS value { return [:ASSIGN, val[0], val[2]] }
 

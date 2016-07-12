@@ -9,6 +9,7 @@ class AdventClass
 		@subclass = subclass
 		@subclass.superclasses << self if @subclass
 		@superclasses = []
+		@attrs = []
 		CLASS_LIST[name] = self if add_to_list
 	end
 
@@ -16,6 +17,31 @@ class AdventClass
 		return -1 if !@subclass && other_class.subclass
 		other_class == self ? dist : @subclass.distance_from(other_class, dist + 1)
 	end
+
+	# def call(obj, method_name, args = [])
+	# 	m = find_attr(method_name)
+	# 	if m && AdventCore.class_for_val(m) == BLOCK
+	# 		m.call(obj, *args)
+	# 	else
+	# 		# TODO: raise if it's not a method
+	# 		ADVENT_REFERENCE_E.raise("Undefined method `#{method_name}' for type `#@name'.")
+	# 	end
+	# end
+
+	# def find_attr(attr_name)
+	# 	m = @attr[attr_name]
+	# 	return m if m
+	# 	@subclass ? @subclass.find_attr(attr_name) : NONE
+	# end
+
+	# def attr(attr_name)
+	# 	a = find_attr(attr_name)
+	# 	if a == NONE
+	# 		ADVENT_REFERENCE_E.raise("Undefined attribute `#{attr_name}` for type `#@name`.")
+	# 	else
+	# 		a
+	# 	end
+	# end
 
 end
 

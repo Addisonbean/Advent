@@ -1,5 +1,6 @@
 Add:
 	bitwise operators
+	fix escape sequences in strings (look at day8_pt1.rb)
 	let $0, $1, ... be used to access block arguments? or no?
 	allow blocks like if statements to not make a new scope
 	add += and related operators
@@ -28,9 +29,12 @@ Add:
 	add puncuation to errors in the call to raise or the definition of raise?
 	don't assign the special `_` variable
 	write tests for bin/advent
+	use heredocs in tests
+	add a readme, and a file on contributing that explains stuff like `# DANGEROUS` and why tabs are superior to spaces
 
 Soon:
 	add methods
+	raise an error when calling a value that's not a function/method
 	print the return values as they would be represented in Advent, not Ruby (half complete, requires classes)
 	the todolist in bin/advent
 
