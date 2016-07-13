@@ -20,6 +20,7 @@ module AdventCore
 		when Block then :Block
 		when NilClass then :Null
 		when TrueClass, FalseClass then :Bool
+		when AdventClass then :Class
 		end
 	end
 
@@ -31,6 +32,7 @@ module AdventCore
 		when Block then BLOCK
 		when NilClass then NULL
 		when TrueClass, FalseClass then BOOLEAN
+		when AdventClass then AdventClass
 		end
 	end
 end
@@ -42,6 +44,7 @@ class Block
 	def initialize(tree, params = [])
 		@tree = tree
 		# params: [[:Type, :name], ...]
+		# ps: `:Type` may not really exists or be a type
 		@params = params
 		@scope = nil
 	end
@@ -56,6 +59,7 @@ class Advent
 		@parser = AdventParser.new
 		@global_scope = Scope.new
 		init_operators
+		init_scope
 	end
 
 	# DANGEROUS
@@ -271,6 +275,17 @@ class Advent
 			}.")
 		end
 		matches[res[0][0]][1]
+	end
+
+	def init_scope
+		@global_scope[:Any] = ANY
+		@global_scope[:Number] = NUMBER
+		@global_scope[:Integer] = INTEGER
+		@global_scope[:Float] = FLOAT
+		@global_scope[:String] = STRING
+		@global_scope[:Block] = BLOCK
+		@global_scope[:Null] = NULL
+		@global_scope[:Boolean] = BOOLEAN
 	end
 
 end

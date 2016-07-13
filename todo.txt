@@ -37,6 +37,7 @@ Soon:
 	raise an error when calling a value that's not a function/method
 	print the return values as they would be represented in Advent, not Ruby (half complete, requires classes)
 	the todolist in bin/advent
+	add constants so you can't redefine classes and stuff
 
 	have non-binary operators use AdventCore.find_op
 		allow definition of non-binary operators 

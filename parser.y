@@ -73,7 +73,8 @@ rule
 	| parameter COMMA parameters { return [val[0], *val[2]] }
 
 	parameter : VAR { return [:Any, val[0]] }
-	| VAR CAST TYPE { return [val[2], val[0]] }
+	# the second var in the line below should be the name of a type
+	| VAR CAST VAR { return [val[2], val[0]] }
 
 	opt_arguments :
 	| arguments

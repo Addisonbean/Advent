@@ -12,7 +12,7 @@ require 'racc/parser.rb'
 
 class AdventParser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 99)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 100)
 	def parse(input)
 		scan_str(input)
 	end
@@ -148,7 +148,7 @@ racc_action_pointer = [
    473,   128,   151,   174,   197,    42,   243,   nil,   266,   514,
    289,    42,    -2,    19,    67,   -11,    60,   -12,    60,   497,
    nil,   nil,   132,   138,   155,    86,   109,   566,    39,    63,
-   nil,    -3,    88,   nil,   527,   nil,   553,   nil,    65,   nil,
+   nil,    -3,    88,   nil,   527,   nil,   553,   nil,    75,   nil,
     59,    76,   nil,   358,   nil,   nil,    83,   nil,    82,   nil,
    nil ]
 
@@ -191,58 +191,58 @@ racc_goto_default = [
 
 racc_reduce_table = [
   0, 0, :racc_error,
+  1, 33, :_reduce_none,
+  1, 33, :_reduce_none,
+  2, 33, :_reduce_3,
+  2, 33, :_reduce_4,
+  3, 33, :_reduce_5,
+  3, 33, :_reduce_6,
+  0, 35, :_reduce_none,
+  1, 35, :_reduce_none,
+  1, 34, :_reduce_9,
+  1, 34, :_reduce_10,
+  1, 34, :_reduce_11,
+  1, 34, :_reduce_12,
+  1, 34, :_reduce_13,
   1, 34, :_reduce_none,
   1, 34, :_reduce_none,
-  2, 34, :_reduce_3,
-  2, 34, :_reduce_4,
-  3, 34, :_reduce_5,
-  3, 34, :_reduce_6,
-  0, 36, :_reduce_none,
+  1, 34, :_reduce_none,
+  3, 34, :_reduce_17,
+  1, 34, :_reduce_18,
+  1, 34, :_reduce_none,
+  1, 34, :_reduce_none,
+  1, 34, :_reduce_none,
+  1, 34, :_reduce_none,
+  3, 38, :_reduce_23,
+  3, 38, :_reduce_24,
+  3, 38, :_reduce_25,
+  3, 38, :_reduce_26,
+  3, 38, :_reduce_27,
+  3, 38, :_reduce_28,
+  3, 38, :_reduce_29,
+  3, 38, :_reduce_30,
+  2, 39, :_reduce_31,
+  2, 39, :_reduce_32,
   1, 36, :_reduce_none,
-  1, 35, :_reduce_9,
-  1, 35, :_reduce_10,
-  1, 35, :_reduce_11,
-  1, 35, :_reduce_12,
-  1, 35, :_reduce_13,
-  1, 35, :_reduce_none,
-  1, 35, :_reduce_none,
-  1, 35, :_reduce_none,
-  3, 35, :_reduce_17,
-  1, 35, :_reduce_18,
-  1, 35, :_reduce_none,
-  1, 35, :_reduce_none,
-  1, 35, :_reduce_none,
-  1, 35, :_reduce_none,
-  3, 39, :_reduce_23,
-  3, 39, :_reduce_24,
-  3, 39, :_reduce_25,
-  3, 39, :_reduce_26,
-  3, 39, :_reduce_27,
-  3, 39, :_reduce_28,
-  3, 39, :_reduce_29,
-  3, 39, :_reduce_30,
-  2, 40, :_reduce_31,
-  2, 40, :_reduce_32,
-  1, 37, :_reduce_none,
-  1, 37, :_reduce_none,
-  3, 44, :_reduce_35,
-  3, 38, :_reduce_36,
-  3, 41, :_reduce_37,
-  5, 41, :_reduce_38,
-  4, 42, :_reduce_39,
-  3, 42, :_reduce_40,
-  3, 43, :_reduce_41,
-  3, 43, :_reduce_42,
-  0, 47, :_reduce_none,
-  1, 47, :_reduce_none,
-  1, 45, :_reduce_45,
-  3, 45, :_reduce_46,
-  1, 48, :_reduce_47,
-  3, 48, :_reduce_48,
-  0, 49, :_reduce_none,
-  1, 49, :_reduce_none,
-  1, 46, :_reduce_51,
-  3, 46, :_reduce_52 ]
+  1, 36, :_reduce_none,
+  3, 43, :_reduce_35,
+  3, 37, :_reduce_36,
+  3, 40, :_reduce_37,
+  5, 40, :_reduce_38,
+  4, 41, :_reduce_39,
+  3, 41, :_reduce_40,
+  3, 42, :_reduce_41,
+  3, 42, :_reduce_42,
+  0, 46, :_reduce_none,
+  1, 46, :_reduce_none,
+  1, 44, :_reduce_45,
+  3, 44, :_reduce_46,
+  1, 47, :_reduce_47,
+  3, 47, :_reduce_48,
+  0, 48, :_reduce_none,
+  1, 48, :_reduce_none,
+  1, 45, :_reduce_51,
+  3, 45, :_reduce_52 ]
 
 racc_reduce_n = 53
 
@@ -280,10 +280,9 @@ racc_token_table = {
   :IF => 28,
   :ELSE => 29,
   :COMMA => 30,
-  :CAST => 31,
-  :TYPE => 32 }
+  :CAST => 31 }
 
-racc_nt_base = 33
+racc_nt_base = 32
 
 racc_use_result_var = true
 
@@ -336,7 +335,6 @@ Racc_token_to_s_table = [
   "ELSE",
   "COMMA",
   "CAST",
-  "TYPE",
   "$start",
   "expression",
   "value",
@@ -615,7 +613,7 @@ module_eval(<<'.,.,', 'parser.y', 74)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 75)
+module_eval(<<'.,.,', 'parser.y', 76)
   def _reduce_48(val, _values, result)
      return [val[2], val[0]] 
     result
@@ -626,14 +624,14 @@ module_eval(<<'.,.,', 'parser.y', 75)
 
 # reduce 50 omitted
 
-module_eval(<<'.,.,', 'parser.y', 80)
+module_eval(<<'.,.,', 'parser.y', 81)
   def _reduce_51(val, _values, result)
      return [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 81)
+module_eval(<<'.,.,', 'parser.y', 82)
   def _reduce_52(val, _values, result)
      return [val[0], *val[2]] 
     result

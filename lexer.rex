@@ -15,9 +15,6 @@ macro
 	CMP_OP (<|>)
 	CAST :
 	DOT \.
-	# todo: this won't work for use defined types...
-	TYPE (Any|Number|Integer|Float|String|Block|Null|Boolean)
-	# all keywords should go above here
 	VAR [a-zA-Z_]\w*
 	FLOAT \d+\.\d+
 	INTEGER \d+
@@ -52,7 +49,6 @@ rule
 	{CAST} { [:CAST, text.to_sym] }
 	{DOT} { [:DOT, text.to_sym] }
 	{OP} { [:OP, text.to_sym] }
-	{TYPE} { [:TYPE, text.to_sym] }
 	{VAR} { [:VAR, text.to_sym] }
 	{FLOAT} { [:FLOAT, Float(text)] }
 	{INTEGER} { [:INTEGER, text.to_i] }

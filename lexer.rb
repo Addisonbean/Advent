@@ -99,9 +99,6 @@ class AdventParser < Racc::Parser
       when (text = @ss.scan(/op/))
          action { [:OP, text.to_sym] }
 
-      when (text = @ss.scan(/(Any|Number|Integer|Float|String|Block|Null|Boolean)/))
-         action { [:TYPE, text.to_sym] }
-
       when (text = @ss.scan(/[a-zA-Z_]\w*/))
          action { [:VAR, text.to_sym] }
 

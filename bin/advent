@@ -26,7 +26,7 @@ end
 def exec(lang, line)
 	begin
 		val = lang.exec(line)
-		puts "=> #{AdventCore.display_advent_val(val)}"
+		puts "=> #{AdventCore.display_advent_val(val)}" if val != EXIT
 	rescue Racc::ParseError => e
 		*_, tok, name = e.to_s.split(" ")
 		if %w[nil "$"].include?(tok)
