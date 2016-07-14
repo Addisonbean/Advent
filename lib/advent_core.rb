@@ -173,6 +173,10 @@ class Advent
 
 	# DANGEROUS
 	def call_block(b, scope, args = [], parse_args = true)
+		unless AdventCore.type_of(b) == :Block
+			return ADVENT_REFERENCE_E.raise("`#{AdventCore.display_advent_val(b)}' is not a block.")
+		end
+		return nil unless b.tree
 		args.each_with_index do |arg, i|
 			param = b.params[i][1]
 			b.scope.real_scope[param] = if parse_args
