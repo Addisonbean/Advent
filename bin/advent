@@ -14,7 +14,7 @@ lang = Advent.new
 
 def prompt(promptly = "advt> ")
 	input = Readline.readline(promptly, true)
-	Readline::HISTORY.pop if input =~ /^\s*$/ || input == Readline::HISTORY.to_a[-2]
+	Readline::HISTORY.pop if input =~ /\A\s*\z/ || input == Readline::HISTORY.to_a[-2]
 	if input
 		input
 	else
@@ -23,21 +23,24 @@ def prompt(promptly = "advt> ")
 	end
 end
 
+# this doesn't work: { a: Number, b: Fawn in a + b - infinity }
+
 def exec(lang, line)
 	begin
+		return if line =~ /\A\s*\z/
 		val = lang.exec(line)
-		puts "=> #{AdventCore.display_advent_val(val)}" if val != EXIT
+		puts "=> #{val.attr(:toString).rb_val.tree.call(val).rb_val}" if val != EXIT
 	rescue Racc::ParseError => e
 		*_, tok, name = e.to_s.split(" ")
 		if %w[nil "$"].include?(tok)
 			exec(lang, line + "\n" + prompt("... > ")) unless line =~ /^\s*$/
 		else
+			# TODO: the whole [2..-2] doesn't work when tok only contains letters and a :
 			ADVENT_PARSE_E.raise("Unexpected token: `#{tok[2..-2]}'.")
 		end
 	rescue AdventParser::ScanError => e
 		tok = e.to_s.split(" ")[-1][1..-2]
 		ADVENT_PARSE_E.raise("Unexpected token: `#{tok}'.")
-	rescue SystemExit
 	end
 end
 

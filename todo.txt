@@ -26,21 +26,27 @@ Add:
 	make a vim plugin for the language
 	extensively check for possible errors/crashes
 	add a Gemfile so you can do "bundle install" and crap
-	add puncuation to errors in the call to raise or the definition of raise?
+	add punctuation to errors in the call to raise or the definition of raise?
 	don't assign the special `_` variable
 	write tests for bin/advent
 	use heredocs in tests
 	add a readme, and a file on contributing that explains stuff like `# DANGEROUS` and why tabs are superior to spaces
+	add consistency
+	make `null`, `true`, and `false` constants/singleton classes so there is only one AdventValue instance for each
 
 Soon:
-	add methods
-	print the return values as they would be represented in Advent, not Ruby (half complete, requires methods)
+	don't override `attr` in AdventValue
 	the todolist in bin/advent
 	add constants so you can't redefine classes and stuff
+	stop referring to classes using symbols
+	refactor by using named method parameters
 
+	add a way for classes to determine their truthyness
+	add else if statements
 	have non-binary operators use AdventCore.find_op
 		allow definition of non-binary operators 
 	recognize types as constants/vars so it'll recognize user defined types
 		define/store classes in Advent so they don't carry over to other instances of Advent
 	when using && and || don't check the second arg if it won't matter
 
+	vim:spell

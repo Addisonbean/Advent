@@ -12,7 +12,7 @@ op + { x: Integer, y: Integer in
 }
 
 4 + 9
-			)).must_equal 36
+			)).rb_val.must_equal 36
 		end
 
 		it "doesn't mess with the operator for other types" do
@@ -23,7 +23,7 @@ op + { x: Integer, y: Integer in
 }
 
 "123" + "abc"
-			)).must_equal "123abc"
+			)).rb_val.must_equal "123abc"
 			@lang = Advent.new
 			@lang.exec(%(
 op + { x: Integer, y: Integer in 
@@ -31,7 +31,7 @@ op + { x: Integer, y: Integer in
 }
 
 1.0 + 3.0
-			)).must_equal 4.0
+			)).rb_val.must_equal 4.0
 		end
 	end
 

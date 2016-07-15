@@ -37,7 +37,7 @@ CODE
 		end
 
 		it "doesn't happen when not necessary" do
-			@lang.exec(<<CODE).must_equal 9.0
+			@lang.exec(<<CODE).rb_val.must_equal 9.0
 op + { x: Integer, y: Number in 
 	x * y - 1
 }

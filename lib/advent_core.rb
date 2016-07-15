@@ -1,10 +1,15 @@
 require_relative "../parser"
 require_relative "advent_classes"
 require_relative "advent_errors"
+require_relative "advent_blocks"
 
 module AdventCore
 	def self.str_escape(str)
 		str[1..-2]
+	end
+
+	def self.truthy(val)
+		!!val.rb_val
 	end
 
 	def self.display_advent_val(val)
@@ -35,20 +40,19 @@ module AdventCore
 		when AdventClass then AdventClass
 		end
 	end
-end
 
-class Block
-
-	attr_accessor :tree, :params, :scope
-
-	def initialize(tree, params = [])
-		@tree = tree
-		# params: [[:Type, :name], ...]
-		# ps: `:Type` may not really exists or be a type
-		@params = params
-		@scope = nil
+	def self.class_for_symbol(sym)
+		case sym
+		when :ANY then ANY
+		when :FLOAT then FLOAT
+		when :INTEGER then INTEGER
+		when :STRING then STRING
+		when :BLOCK then BLOCK
+		when :NULL then NULL
+		when :BOOL then BOOLEAN
+		# when :CLASS then CLASS # is this neccessary? is the :ANY case neccessary either?
+		end
 	end
-
 end
 
 class Advent
@@ -73,13 +77,13 @@ class Advent
 		token = ary.shift
 		val = case token
 		# [:TYPE, ruby_value]
-		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING # TODO? make this line: `when :LITERAL`? Probably not, idk
-			ary.shift
+		when :NULL, :INTEGER, :FLOAT, :BOOL, :STRING
+			AdventValue.new(ary.shift, AdventCore.class_for_symbol(token))
 		# [:BLOCK, Block]
 		when :BLOCK
 			b = ary.shift
 			b.scope = scope.make_child_scope
-			b
+			AdventValue.new(b, BLOCK)
 		# [:VAR, Symbol]
 		when :VAR
 			scope[ary.shift]
@@ -98,10 +102,10 @@ class Advent
 			val2 = parse(ary.shift, scope)
 			return EXIT if val2 == EXIT
 
-			op = find_op(op_sym, [AdventCore.class_for_val(val1), AdventCore.class_for_val(val2)])
+			op = find_op(op_sym, [val1.klass, val2.klass])
 			return EXIT if op == EXIT
 
-			if op.is_a?(Block)
+			if op.is_a?(AdventValue)
 				v = call_block(op, scope, [val1, val2], false)
 				return EXIT if v == EXIT
 				v
@@ -110,7 +114,10 @@ class Advent
 			end
 		# [:UOPERATOR, [value]]
 		when :UOPERATOR
-			unary_operator(ary.shift, parse(ary.shift, scope))
+			op = ary.shift
+			val = parse(ary.shift, scope)
+			return EXIT if val == EXIT
+			unary_operator(op, val)
 		# [:CALL, [block_value], [:ARGS, [arg1_value], [arg2_value], ...]]
 		when :CALL
 			blk = parse(ary.shift, scope)
@@ -123,7 +130,7 @@ class Advent
 		when :IF
 			cond = parse(ary.shift, scope)
 			return EXIT if cond == EXIT
-			if cond
+			if AdventCore.truthy(cond)
 				blk = parse(ary.shift, scope)
 				return EXIT if blk == EXIT
 
@@ -143,7 +150,7 @@ class Advent
 					return EXIT if v == EXIT
 					v
 				else
-					nil
+					AdventValue.new(nil, NULL)
 				end
 			end
 		# [:OP_DEF, Symbol, [block_value]]
@@ -151,7 +158,7 @@ class Advent
 			op = ary.shift
 			blk = parse(ary.shift, scope)
 			return EXIT if blk == EXIT
-			cs = blk.params.map do |p|
+			cs = blk.rb_val.params.map do |p|
 				AdventClass::CLASS_LIST[p[0]]
 			end
 			ops = @operators[op]
@@ -159,83 +166,108 @@ class Advent
 			ops.reject! { |the_op| the_op[0] == cs }
 			ops << [cs, blk]
 		# [:ATTR, [value], Symbol]
-		# when :ATTR
-		# 	val = parse(ary.shift, scope)
-		# 	return EXIT if val == EXIT
-		# 	klass = AdventCore.class_for_val(val)
-		# 	res = klass.attr
+		when :ATTR
+			val = parse(ary.shift, scope)
+			return EXIT if val == EXIT
+			val.attr(ary.shift)
+		# [:ATTR_ASSIGN, [:ATTR, [value], Symbol], [value]]
+		when :ATTR_ASSIGN
+			attr_thing = ary.shift
+			val = parse(attr_thing[1], scope)
+			return EXIT if val == EXIT
 
+			aval = parse(ary.shift, scope)
+			return EXIT if aval == EXIT
+
+			val.set_attr(attr_thing[2], aval)
 		else 
 			return ADVENT_PARSE_E.raise("Unrecognized token: #{token}.")
 		end
 		ary.empty? ? val : parse(ary, scope)
 	end
 
+	# TODO: refactor
 	# DANGEROUS
-	def call_block(b, scope, args = [], parse_args = true)
-		unless AdventCore.type_of(b) == :Block
+	def call_block(blk, scope, args = [], parse_args = true)
+		unless blk.klass == BLOCK
 			return ADVENT_REFERENCE_E.raise("`#{AdventCore.display_advent_val(b)}' is not a block.")
 		end
+		b = blk.rb_val
+		slef = blk.parent
 		return nil unless b.tree
-		args.each_with_index do |arg, i|
-			param = b.params[i][1]
-			b.scope.real_scope[param] = if parse_args
-				v = parse(arg, scope)
-				return EXIT if v == EXIT
-				v
-			else
-				arg
+		if b.is_rb_block
+			parsed_args = args
+			if parse_args
+				parsed_args.map do |ar|
+					ar = parse(ar, scope)
+					return EXIT if ar == EXIT
+					ar
+				end
 			end
+			parsed_args.unshift(slef) if slef
+			b.tree.call(*parsed_args)
+		else
+			args.each_with_index do |arg, i|
+				param = b.params[i][1]
+				b.scope.real_scope[param] = if parse_args
+					v = parse(arg, scope)
+					return EXIT if v == EXIT
+					v
+				else
+					arg
+				end
+				b.scope.real_scope[:self] = slef if slef
+			end
+			parse(b.tree, b.scope)
 		end
-		parse(b.tree, b.scope)
 	end
 
 	def init_operators
 		@operators = {
 			:+ => [
-				[[NUMBER, NUMBER], -> (x, y) { x + y } ],
-				[[STRING, STRING], -> (x, y) { x + y } ]
+				[[NUMBER, NUMBER], -> (x, y) { AdventValue.new(x.rb_val + y.rb_val, x.klass <=> y.klass) } ],
+				[[STRING, STRING], -> (x, y) { AdventValue.new(x.rb_val + y.rb_val, STRING) } ]
 			],
 			:- => [
-				[[NUMBER, NUMBER], -> (x, y) { x - y } ]
+				[[NUMBER, NUMBER], -> (x, y) { AdventValue.new(x.rb_val - y.rb_val, x.klass <=> y.klass) } ]
 			],
 			:* => [
-				[[NUMBER, NUMBER], -> (x, y) { x * y } ],
-				[[STRING, INTEGER], -> (x, y) { x * y } ]
+				[[NUMBER, NUMBER], -> (x, y) { AdventValue.new(x.rb_val * y.rb_val, x.klass <=> y.klass) } ],
+				[[STRING, INTEGER], -> (x, y) { AdventValue.new(x.rb_val * y.rb_val, STRING) } ]
 			],
 			:/ => [
-				[[NUMBER, NUMBER], -> (x, y) { x / y } ]
+				[[NUMBER, NUMBER], -> (x, y) { AdventValue.new(x.rb_val / y.rb_val, x.klass <=> y.klass) } ]
 			],
 			:** => [
-				[[NUMBER, NUMBER], -> (x, y) { x ** y } ]
+				[[NUMBER, NUMBER], -> (x, y) { AdventValue.new(x.rb_val ** y.rb_val, x.klass <=> y.klass) } ]
 			],
 			:== => [
-				[[ANY, ANY], -> (x, y) { x == y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val == y.rb_val, BOOLEAN) } ]
 			],
 			:!= => [
-				[[ANY, ANY], -> (x, y) { x != y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val != y.rb_val, BOOLEAN) } ]
 			],
 			:< => [
-				[[ANY, ANY], -> (x, y) { x < y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val < y.rb_val, BOOLEAN) } ]
 			],
 			:> => [
-				[[ANY, ANY], -> (x, y) { x > y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val > y.rb_val, BOOLEAN) } ]
 			],
 			:<= => [
-				[[ANY, ANY], -> (x, y) { x <= y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val <= y.rb_val, BOOLEAN) } ]
 			],
 			:>= => [
-				[[ANY, ANY], -> (x, y) { x >= y } ]
+				[[ANY, ANY], -> (x, y) { AdventValue.new(x.rb_val >= y.rb_val, BOOLEAN) } ]
 			],
-			[:Any, :!] => -> (x) { !x },
+			[:Any, :!] => -> (x) { AdventValue.new(!x.rb_val, BOOLEAN) },
 			# [:Any, :!] => -> (x) { not(x) },
-			[:Integer, :-] => -> (x) { -x },
-			[:Float, :-] => -> (x) { -x }
+			[:Integer, :-] => -> (x) { AdventValue.new(-x.rb_val, x.klass) },
+			[:Float, :-] => -> (x) { AdventValue.new(-x.rb_val, x.klass) }
 		}
 	end
 
 	def unary_operator(operator, val)
-		op = @operators[[AdventCore.type_of(val), operator]]
+		op = @operators[[AdventCore.type_of(val.rb_val), operator]]
 		op = @operators[[:Any, operator]] unless op
 		op.call(val)
 	end

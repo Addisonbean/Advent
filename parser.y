@@ -37,6 +37,7 @@ rule
 	| call_block
 	| if_statement
 	| attribute
+	| attribute_assignment
 
 	boperator : value POW value { return [:BOPERATOR, val[1], val[0], val[2]] }
 	| value MULTIPLY value { return [:BOPERATOR, val[1], val[0], val[2]] }
@@ -54,6 +55,8 @@ rule
 	| FALSE
 
 	attribute : value DOT VAR { return [:ATTR, val[0], val[2]] }
+
+	attribute_assignment : attribute EQUALS value { return [:ATTR_ASSIGN, val[0], val[2]] }
 
 	assignment : VAR EQUALS value { return [:ASSIGN, val[0], val[2]] }
 
@@ -81,13 +84,6 @@ rule
 
 	arguments : value { return [val[0]] }
 	| value COMMA arguments { return [val[0], *val[2]] }
-
-	# start_block : CURLY_BRACKET_L new_lines
-	# end_block : CURLY_BRACKET_R new_lines
-	# block : CURLY_BRACKET_L new_lines expression new_lines CURLY_BRACKET_R { return [:BLOCK, val[1]] }
-
-	# literal : NUMBER
-	# | STRING
 
 end
 
