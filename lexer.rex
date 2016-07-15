@@ -7,7 +7,7 @@ macro
 	NULL null
 	TRUE true
 	FALSE false
-	IN in
+	IN in\s
 	OP op
 	NOT_OP !
 	EQ_OP (==|!=)
@@ -35,13 +35,13 @@ macro
 	# NEW_LINE ;
 	
 rule
+	{IN} { [:IN, text.to_sym] }
 	{BLANK} # nah
 	{IF} { [:IF, nil] }
 	{ELSE} { [:ELSE, nil] }
 	{NULL} { [:NULL, nil] }
 	{TRUE} { [:TRUE, true] }
 	{FALSE} { [:FALSE, false] }
-	{IN} { [:IN, text.to_sym] }
 	{EQ_OP} { [:EQ_OP, text.to_sym] }
 	{CMP_EQ_OP} { [:CMP_EQ_OP, text.to_sym] }
 	{CMP_OP} { [:CMP_OP, text.to_sym] }

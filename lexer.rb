@@ -57,6 +57,9 @@ class AdventParser < Racc::Parser
     token = case @state
     when nil
       case
+      when (text = @ss.scan(/in\s/))
+         action { [:IN, text.to_sym] }
+
       when (text = @ss.scan(/[ \t]+/))
         ;
 
@@ -74,9 +77,6 @@ class AdventParser < Racc::Parser
 
       when (text = @ss.scan(/false/))
          action { [:FALSE, false] }
-
-      when (text = @ss.scan(/in/))
-         action { [:IN, text.to_sym] }
 
       when (text = @ss.scan(/(==|!=)/))
          action { [:EQ_OP, text.to_sym] }

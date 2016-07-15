@@ -23,8 +23,6 @@ def prompt(promptly = "advt> ")
 	end
 end
 
-# this doesn't work: { a: Number, b: Fawn in a + b - infinity }
-
 def exec(lang, line)
 	begin
 		return if line =~ /\A\s*\z/
